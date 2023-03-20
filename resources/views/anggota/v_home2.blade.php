@@ -23,7 +23,7 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-12">
-            <div class="card bg-primary" style="background: url('background.jpg') bottom;center;opacity: 0.9;position: cover; ">
+            <div class="card bg-navy" style="background: url('polkadot.png') right;opacity: 0.9;position: cover;background-size: 60%;100%;background-repeat: no-repeat">
               <div class="card-body">
                 <h3 class="card-title"><span id="greating"></span>                 
                   <script>
@@ -67,7 +67,7 @@
                 </div>
                 <div class="col-lg-6">
                 <a href="/kredit-anggota" class="btn btn-app  btn-block" style="margin:0; min-height:100px">
-                  <span class="badge bg-red" style="font-size: 20px">Rp. 8.000.000</span>
+                  <span class="badge bg-red" style="font-size: 20px">@currency($ttlKredit-$ttlAngsuran)</span>
                   <i class="fas fa-users text-success" style="font-size: 50px"></i> <p style="font-size: 16px">KREDIT</p>
                 </a>
                 </div>

@@ -14,8 +14,17 @@ class SimpananController extends Controller
         $this->middleware(['auth','verified']);
     }
 
+    public function indexBendahara()
+    {
+        return view('bendahara.v_simpanan');
+    }
     public function simpananAnggota()
     {
         return view('anggota.v_simpanan');
+    }
+
+    public function simpananPetugas()
+    {
+        return view('v_simpananSaya');
     }
 }

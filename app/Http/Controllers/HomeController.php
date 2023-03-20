@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\KreditModel;
+use App\Models\AngsuranModel;
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -24,9 +27,30 @@ class HomeController extends Controller
     public function index()
     {
         if(auth()->user()->level == 2){
-            return view('anggota.v_home2');
+            $ttlKredit = KreditModel::where('user_id',auth()->user()->id)
+            ->sum('total');
+            $ttlAngsuran = AngsuranModel::where('user_id', auth()->user()->id)
+            ->select(DB::raw('SUM(jml_angsuran) as ttl_angsuran'))
+            ->value('ttl_angsuran');
+            return view('anggota.v_home2', compact('ttlKredit','ttlAngsuran'));
         }else{
-            return view('admin.v_home');
+            return view('v_home');
         }
     }
+
+    public function markasread($id)
+    {
+        if($id)
+        {
+            auth()->user()->unreadNotifications->where('id',$id)->markAsRead();
+        }
+        return back();    
+    }
+
+    public function statistik()
+    {
+        
+        return view('v_statistik');    
+    }
+
 }

@@ -11,6 +11,11 @@ class AnggotaController extends Controller
     }
 
     public function profileAnggota() {
-        return view('Anggota.v_profile');
+        if(auth()->user()->level == 2)
+        {
+            return view('anggota.v_profile');
+        }else{
+            return view('v_profile');
+        }
     }
 }

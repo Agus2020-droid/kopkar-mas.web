@@ -1,5 +1,5 @@
 @extends('layouts.v_appAnggota')
-@section('title','Home')
+@section('title','Kredit')
 @section('content')
     <!-- Content Header (Page header) -->
     <div class="content-header">
@@ -9,10 +9,10 @@
             <a href="/" style="font-size: 20px"><i class="fas fa-arrow-circle-left" ></i> Kembali</a>
             <div class="float-right">
             <!-- <button class="btn btn-sm " style="font-size: 20px;background:#32599e;color:#fff" data-toggle="modal" data-target="#tambah-kredit"><i class="fas fa-plus-circle" ></i> Tambah Kredit</button> -->
-            <a href="#" class="btn btn-primary no-print" role="button" aria-label="Scroll to top" style="border-radius: 45em" data-toggle="modal" data-target="#tambah-kredit">
-      <i class="fas fa-plus"></i> Kredit Baru
-    </a>
-            </div>
+            <a href="#" class="btn btn-primary no-print <?php if($ttlKredit-$ttlAngsuran == 0) echo ''; else echo 'disabled';?>" role="button" aria-label="Scroll to top" style="border-radius: 45em" data-toggle="modal" data-target="#tambah-kredit">
+              <i class="fas fa-plus"></i> Kredit Baru
+            </a>            
+          </div>
           </div><!-- /.col -->
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
@@ -24,59 +24,225 @@
       <div class="container">
         <div class="row">
           <div class="col-lg-12">
-            <div class="card" style="background:#32599e;color:#fff">
+            <div class="card bg-navy" style="background: url('polkadot.png') right;opacity: 0.9;position: cover;background-size: 60%;100%;background-repeat: no-repeat">
               <div class="card-body">
                 <h3 class="card-title">KREDIT PINJAMAN</h3>
                 <p class="card-text" style="font-size: 40px">
-                  Rp. 8.000.000
+                @php
+                $sisa = $ttlKredit-$ttlAngsuran;
+                @endphp
+                  @currency($sisa)
                 </p>
-                <p  >( DELAPAN JUTA RUPIAH )</p>
+                <p>
+                  @php 
+                  function terbilang($sisa)
+        {
+        $sisa = abs($sisa);
+        $words = array(
+            0 => '',
+            1 => 'satu',
+            2 => 'dua',
+            3 => 'tiga',
+            4 => 'empat',
+            5 => 'lima',
+            6 => 'enam',
+            7 => 'tujuh',
+            8 => 'delapan',
+            9 => 'sembilan',
+            10 => 'sepuluh',
+            11 => 'sebelas',
+            12 => 'dua belas',
+            13 => 'tiga belas',
+            14 => 'empat belas',
+            15 => 'lima belas',
+            16 => 'enam belas',
+            17 => 'tujuh belas',
+            18 => 'delapan belas',
+            19 => 'sembilan belas',
+            20 => 'dua puluh',
+            30 => 'tiga puluh',
+            40 => 'empat puluh',
+            50 => 'lima puluh',
+            60 => 'enam puluh',
+            70 => 'tujuh puluh',
+            80 => 'delapan puluh',
+            90 => 'sembilan puluh'
+        );
+     
+        $result = '';
+     
+        if ($sisa < 0) {
+            $result = 'minus ';
+            $sisa = abs($sisa);
+        }
+     
+        if ($sisa < 21) {
+            $result .= $words[$sisa];
+        } elseif ($sisa < 100) {
+            $result .= $words[10 * floor($sisa / 10)];
+            $remainder = $sisa % 10;
+            if ($remainder) {
+                $result .= ' ' . $words[$remainder];
+            }
+        } elseif ($sisa < 200) {
+            $result .= 'seratus ' . terbilang($sisa - 100);
+        } elseif ($sisa < 1000) {
+            $result .= terbilang(floor($sisa / 100)) . ' ratus ' . terbilang($sisa % 100);
+        } elseif ($sisa < 2000) {
+            $result .= 'seribu ' . terbilang($sisa - 1000);
+        } elseif ($sisa < 1000000) {
+            $result .= terbilang(floor($sisa / 1000)) . ' ribu ' . terbilang($sisa % 1000);
+        } elseif ($sisa < 1000000000) {
+            $result .= terbilang(floor($sisa / 1000000)) . ' juta ' . terbilang($sisa % 1000000);
+        } else {
+            $result .= 'Lebih dari 1 milyar';
+        }
+     
+        return $result;
+          }
+                  @endphp
+                  {{ strtoupper(terbilang($sisa))}} RUPIAH
+                </p>
               </div>
             </div>
-
-            <div class="card card-outline">
+            @if (session('sukses'))
+            <div class="alert alert-success" role="alert">
+            {{session('sukses')}}
+            </div>
+            @endif
+            @if (session('gagal'))
+            <div class="alert alert-danger" role="alert">
+            {{session('gagal')}}
+            </div>
+            @endif
+            @if (count($errors) > 0)
+            <div class="alert alert-danger" role="alert">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+            <div class="card card-outline" >
                 <div class="card-header"><h3 class="card-title">KREDIT ANDA</h3></div>
                   <div class="card-body">
-                      <a href="/detail-kredit-anggota">
+                    @if($kredit->isEmpty())
+                    <div class="box box-primary" style="box-border: 1px solid navy p-3">
+                      <center>
+                      <img src="search.png" alt="" style="width: 250px"><br>
+                      <span>Belum ada transaksi</h5></span>
+                    </div>
+                    @else
+                    @foreach($kredit as $data)
+                      <a href="/detail-kredit-anggota/{{$data->id_kredit}}">
                           <div class="card">
-                              <div class="card-header" style="background:#32599e;color:#fff">
-                              <p class="card-title ">No. Kredit : P-123</p>
-                              <p class="card-title float-right">{{Carbon\Carbon::parse(now())->isoFormat("D/MM/Y")}}</p>
+                              <div class="card-header bg-navy" >
+                              <p class="card-title ">No. Kredit : {{$data->kd_kredit}}</p>
+                              <p class="card-title float-right">{{Carbon\Carbon::parse($data->tgl_kredit)->isoFormat("D MMMM Y")}}</p>
                               </div>
                               <div class="card-body">
                                 <dl class="row">
-                                    <dt class="col-sm-4">Nama Barang</dt>
-                                    <dd class="col-sm-8">Kendaraan Bermotor</dd>
-                                    <dt class="col-sm-4">Merk</dt>
-                                    <dd class="col-sm-8">Yamaha MIO.</dd>
-                                    <dt class="col-sm-4">Jumlah Kredit</dt>
-                                    <dd class="col-sm-8">RP. 9.000.000</dd>
-                                    <dt class="col-sm-4">Status</dt>
-                                    <dd class="col-sm-8"><span class="badge bg-danger">Belum Lunas</span></dd>
+                                    <dt class="col-sm-2">Jenis Kredit</dt>
+                                    <dd class="col-sm-10">{{$data->jns_krdt}}</dd>
+                                    <dt class="col-sm-2 <?php if($data->keperluan == null) echo 'd-none'; else ''; ?>">Keperluan </dt>
+                                    <dd class="col-sm-10 <?php if($data->keperluan == null) echo 'd-none'; else ''; ?>">{{$data->keperluan}}</dd>
+                                    <dt class="col-sm-2 <?php if($data->nm_brg == null) echo 'd-none'; else ''; ?>">Nama Barang</dt>
+                                    <dd class="col-sm-10 <?php if($data->nm_brg == null) echo 'd-none'; else ''; ?>">{{$data->nm_brg}}</dd>
+                                    <dt class="col-sm-2">Nominal Plafon</dt>
+                                    <dd class="col-sm-10">@currency($data->nominal)</dd>
+                                    <dt class="col-sm-2">Tenor</dt>
+                                    <dd class="col-sm-10">{{$data->tenor}} bulan</dd>
+                                    <dt class="col-sm-2">Angsuran</dt>
+                                    <dd class="col-sm-10">@currency($data->angsuran)/bulan</dd>
+                                    <dt class="col-sm-2">Proses Pengajuan</dt>
+                                    <dd class="col-sm-10">
+                                      @php 
+                                      $p1 = ($data->app_ptgs);
+                                      $p2 = ($data->app_bnd);
+                                      $p3 = ($data->app_ket);
+                                      $tl = ($p1+$p2+$p3);
+                                      $rt = round($tl/3*100,2);
+                                      @endphp
+                                      <div class="card  p-3" style="border: 1.5px solid navy">
+                                        <div class="row">
+                                          <div class="col-sm-4">
+                                            <dl class="row">
+                                              <dt class="col-sm-4"> Petugas</dt>
+                                              <dd class="col-sm-8"><i class="fas fa-share mr-1"></i>  
+                                                @if($data->app_ptgs == 1)
+                                                <i class="fas fa-check-circle text-success mr-1"></i> Approved
+                                                @elseif($data->app_ptgs == 2)
+                                                <i class="fas fa-times-circle text-danger mr-1"></i> Not Approved
+                                                @else
+                                                <i class="fas fa-exclamation-circle text-warning mr-1"></i> Wait approval
+                                                @endif
+                                              </dd>
+                                            </dl>
+                                          </div>
+                                          <div class="col-sm-4">
+                                          <dl class="row">
+                                              <dt class="col-sm-4"> Bendahara</dt>
+                                              <dd class="col-sm-8"><i class="fas fa-share mr-1"></i> 
+                                                @if($data->app_bnd == 1)
+                                                <i class="fas fa-check-circle text-success mr-1"></i> Approved
+                                                @elseif($data->app_bnd == 2)
+                                                <i class="fas fa-times-circle text-danger mr-1"></i> Not Approved
+                                                @else
+                                                <i class="fas fa-exclamation-circle text-warning mr-1"></i> Wait approval
+                                                @endif
+                                              </dd>
+                                            </dl>
+                                         
+                                          </div>
+                                          <div class="col-sm-4">
+                                            <dl class="row">
+                                              <dt class="col-sm-4"> Ketua</dt>
+                                              <dd class="col-sm-8"><i class="fas fa-share mr-1"></i> 
+                                                @if($data->app_ket == 1)
+                                                <i class="fas fa-check-circle text-success mr-1"></i> Approved
+                                                @elseif($data->app_ket == 2)
+                                                <i class="fas fa-times-circle text-danger  mr-1"></i> Not Approved
+                                                @else
+                                                <i class="fas fa-exclamation-circle text-warning  mr-1"></i> Wait approval
+                                                @endif
+                                              </dd>
+                                            </dl>
+                                          </div>
+                                        </div>
+                                        <!-- end card -->
+                                        @if($tl != 3)
+                                        <div class="progress mb-3">
+                                          <div class="progress-bar bg-warning"role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: {{$rt}}%">
+                                            <span style="font-size: 16px"><small> {{$rt}}% Complete</small></span>
+                                          </div>
+                                        </div>
+                                        @else
+                                        <div class="progress mb-3">
+                                          <div class="progress-bar bg-success" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: {{$rt}}%">
+                                            <span style="font-size: 16px"><small> {{$rt}}% Complete</small></span>
+                                          </div>
+                                        </div>
+                                        @endif
+                                      </div>
+                                    </dd>
+                                    <dt class="col-sm-2">Status</dt>
+                                  
+                                    <dd class="col-sm-5">
+                                    @if($data->total == $data->jmlAngsuran)
+                                    <span class="badge bg-success">LUNAS</span>
+                                    @elseif($data->total < $data->jmlAngsuran)
+                                    <span class="badge bg-warning">LEBIH ANGSURAN</span>
+                                    @elseif($data->total > $data->jmlAngsuran)
+                                    <span class="badge bg-danger">BELUM LUNAS</span>
+                                    @endif
+                                    </dd>
                                 </dl>
                               </div>
                           </div>
                       </a>
-                      <a href="/detail-kredit-anggota">
-                          <div class="card">
-                              <div class="card-header" style="background:#32599e;color:#fff">
-                              <p class="card-title ">No. Kredit : P-123</p>
-                              <p class="card-title float-right">{{Carbon\Carbon::parse(now())->isoFormat("D/MM/Y")}}</p>
-                              </div>
-                              <div class="card-body">
-                                <dl class="row">
-                                    <dt class="col-sm-4">Nama Barang</dt>
-                                    <dd class="col-sm-8">Kendaraan Bermotor</dd>
-                                    <dt class="col-sm-4">Merk</dt>
-                                    <dd class="col-sm-8">Yamaha MIO.</dd>
-                                    <dt class="col-sm-4">Jumlah Kredit</dt>
-                                    <dd class="col-sm-8">RP. 9.000.000</dd>
-                                    <dt class="col-sm-4">Status</dt>
-                                    <dd class="col-sm-8"><span class="badge bg-danger">Belum Lunas</span></dd>
-                                </dl>
-                              </div>
-                          </div>
-                      </a>
+                      @endforeach
+                      @endif
                   </div>
                 </div><!-- /.card -->
             </div>
@@ -86,10 +252,10 @@
       </div><!-- /.container-fluid -->
     </div>
     <!-- /.content -->
-    <div class="modal fade show" id="tambah-kredit" style="display: none; padding-right: 17px;" aria-modal="true" role="dialog">
+      <div class="modal fade show" id="tambah-kredit" style="display: none; padding-right: 17px;" aria-modal="true" role="dialog">
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
-            <div class="modal-header" style="background:#32599e;color:#fff">
+            <div class="modal-header bg-navy">
               <h5 class="modal-title">Form Pengajuan Kredit</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">×</span>
@@ -144,23 +310,19 @@
                       </div>
                     </div>
                     <!-- option 1 -->     
-                    <div id="f-barang" style="display: none;">
+                      <div id="f-barang" style="display: none;">
                         <div class="form-group row">
                           <label class="col-sm-4 col-form-label">Nama Barang<span class="text-danger">*</span></label>
                           <div class="col-sm-8">
                             <div class="form-group">
-                              <input id="nm_brg" name="nm_brg" type="text" class="form-control" >
+                              <input id="nm_brg" name="nm_brg" type="text" class="form-control">
+                              @error('nm_brg')
+                                  <div>{{ $message }}</div>
+                              @enderror
                             </div>
                           </div>
                         </div>
-                          <div class="form-group row">
-                            <label class="col-sm-4 col-form-label">Spesifikasi<span class="text-danger">*</span></label>
-                            <div class="col-sm-8">
-                              <div class="form-group">
-                                <input id="spek" name="spek" type="text" class="form-control" >
-                              </div>
-                            </div>
-                          </div>
+
                           <div class="form-group row">
                             <label class="col-sm-4 col-form-label">Jumlah Barang<span class="text-danger">*</span></label>
                             <div class="col-sm-8">
@@ -172,70 +334,79 @@
                       </div>
                       <!-- End option 1 -->
                       <!-- option 2 -->     
-                      <div id="f-kendaraan" style="display: none;">
+                      <div id="f-k" style="display: none;">
                         <div class="form-group row">
-                          <label class="col-sm-4 col-form-label">Nama Kendaraan<span class="text-danger">*</span></label>
+                          <label class="col-sm-4 col-form-label">Merk/Brand Kendaraan<span class="text-danger">*</span></label>
                           <div class="col-sm-8">
                             <div class="form-group">
-                              <input name="nm_kendaraan" type="text" class="form-control">
-                            </div>
-                          </div>
-                        </div>
-                        <div class="form-group row">
-                          <label class="col-sm-4 col-form-label"> Jumlah Unit<span class="text-danger">*</span></label>
-                          <div class="col-sm-8">
-                            <div class="form-group">
-                              <input name="jml_unit" type="text" class="form-control" >
+                              <input id="nm_kendaraan" name="nm_kendaraan" type="text" class="form-control">
                             </div>
                           </div>
                         </div>
                         <div class="form-group row">
                           <label class="col-sm-4 col-form-label">Kondisi<span class="text-danger">*</span></label>
                           <div class="col-sm-8">
-                          <div class="form-group clearfix">
-                            <div class="icheck-primary ">
-                              <input name="kondisi" type="radio" id="kondisi1"  >
-                              <label for="radioPrimary1">Baru
-                              </label>
-                            </div>
-                            <div class="icheck-primary d-inline">
-                              <input type="radio" id="kondisi2" name="kondisi">
-                              <label for="radioPrimary2">Bekas
-                              </label>
-                            </div>
-                          </div>
+                            <div class="form-group clearfix">
+                              <div class="icheck-primary d-inline">
+                                <input type="radio" id="radioPrimary1" name="kondisi" value="Baru">
+                                <label for="radioPrimary1">Baru
+                                </label>
+                              </div>
+                              <div class="icheck-primary d-inline">
+                                <input type="radio" id="radioPrimary2" name="kondisi" value="bekas">
+                                <label for="radioPrimary2">Bekas
+                                </label>
+                              </div>
                             </div>
                         </div>
+                        </div>
+                        <div class="form-group row">
+                          <label class="col-sm-4 col-form-label"> Jumlah Unit<span class="text-danger">*</span></label>
+                          <div class="col-sm-8">
+                            <div class="form-group">
+                              <input id="jml_unit" name="jml_unit" type="number" class="form-control" >
+                            </div>
+                          </div>
+                        </div>
+
                       </div>
                       <!-- End option 2 -->
                       <!-- dibeli oleh -->
                       <div id="f-beli" style="display: none;">
                         <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Spesifikasi<span class="text-danger">*</span></label>
+                            <div class="col-sm-8">
+                              <div class="form-group">
+                                <input id="spek" name="spek" type="text" class="form-control" >
+                              </div>
+                            </div>
+                          </div>
+                        <div class="form-group row">
                             <label class="col-sm-4 col-form-label">Pembelian Oleh<span class="text-danger">*</span></label>
                             <div class="col-sm-8">
                               <div class="form-group clearfix">
-                                <div class="icheck-primary ">
-                                  <input type="radio" id="radioPrimary1" name="beli_oleh" >
-                                  <label for="radioPrimary1">Koperasi
+                                <div class="icheck-primary d-inline">
+                                  <input type="radio" id="radioDanger1" name="beli_oleh" value="Koperasi">
+                                  <label for="radioDanger1">Koperasi
                                   </label>
                                 </div>
                                 <div class="icheck-primary d-inline">
-                                  <input type="radio" id="radioPrimary2" name="beli_oleh">
-                                  <label for="radioPrimary2">Sendiri
+                                  <input type="radio" id="radioDanger2" name="beli_oleh" value="Sendiri">
+                                  <label for="radioDanger2">Sendiri
                                   </label>
                                 </div>
                             </div>
-                              </div>
                           </div>
-                        </div>
-                      <!-- end dibeli oleh -->
-                      <!-- option 3 -->     
+                      </div>
+                    </div>
+                  <!-- end dibeli oleh -->
+                  <!-- option 3 -->     
                     <div id="f-tunai" style="display: none;">
                         <div class="form-group row">
                           <label class="col-sm-4 col-form-label">Keperluan<span class="text-danger">*</span></label>
                           <div class="col-sm-8">
                             <div class="form-group">
-                              <input name="keperluan" type="text" class="form-control" >
+                              <input id="keperluan" name="keperluan" type="text" class="form-control" >
                             </div>
                           </div>
                         </div>
@@ -270,54 +441,43 @@
                                 <option value="10">10 Bulan</option>
                                 <option value="11">11 Bulan</option>
                                 <option value="12">12 Bulan</option>
+                                <option value="13">13 Bulan</option>
+                                <option value="14">14 Bulan</option>
+                                <option value="15">15 Bulan</option>
+                                <option value="16">16 Bulan</option>
+                                <option value="17">17 Bulan</option>
+                                <option value="18">18 Bulan</option>
+                                <option value="19">19 Bulan</option>
+                                <option value="20">20 Bulan</option>
+                                <option value="21">21 Bulan</option>
+                                <option value="22">22 Bulan</option>
+                                <option value="23">23 Bulan</option>
+                                <option value="24">24 Bulan</option>
                               </select>
                             </div>
                           </div>
                         </div>
 
                       <button type="button"class="btn btn-primary" onclick="stepper.previous()">Previous</button>
-                      <button type="button"class="btn btn-primary" onclick="stepper.next()">Next</button>
+                      <button id="btnView" type="button"class="btn btn-primary" onclick="stepper.next()">Next</button>
                     </div>
                     <div id="konfirmasi-part" class="content active dstepper-block" role="tabpanel" aria-labelledby="konfirmasi-part-trigger">
-                    <ul class="list-group list-group-unbordered mb-3">
-                      <li class="list-group-item">
-                        <b>Jenis Kredit</b> <a class="float-right" id="v_jns_krdt"> </a>
-                      </li>
-                      <li class="list-group-item" id="list2" style="display:none">
-                        <b>Nama Barang</b> <a class="float-right" id="v_nm_brg"></a>
-                      </li>
-                      <li class="list-group-item" id="list3" style="display:none">
-                        <b>Spesifikasi</b> <a class="float-right"></a>
-                      </li>
-                      <li class="list-group-item" id="list4" style="display:none">
-                        <b>Nama Kendaraan</b> <a class="float-right"></a>
-                      </li>
-                      <li class="list-group-item" id="list5" style="display:none">
-                        <b>Jumlah barang</b> <a class="float-right"></a>
-                      </li>
-                      <li class="list-group-item" id="list6" style="display:none">
-                        <b>Kondisi</b> <a class="float-right"></a>
-                      </li>
-                      <li class="list-group-item" id="list7" style="display:none">
-                        <b>Pembelian oleh</b> <a class="float-right"></a>
-                      </li>
-                      <li class="list-group-item" id="list8" style="display:none">
-                        <b>Keperluan</b> <a class="float-right"></a>
-                      </li>
-                      <li class="list-group-item">
-                        <b>Nominal Plafon <small>(Rupiah)</small></b> <a class="float-right" id="v_plafon"></a>
-                      </li>
-                      <li class="list-group-item">
-                        <b>Tenor <small>(bulan)</small></b> <a class="float-right" id="v_tenor"></a>
-                      </li>
-                      <li class="list-group-item">
-                        <b>Angsuran <small>(per bulan)</small></b> <a class="float-right" id="v_angsuran"></a>
-                      </li>
-
-                    </ul>
-
+                    <div class="alert alert-default alert-dismissible" style="border: 2px solid orange">
+                      <!-- <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> -->
+                      <h5><i class="icon fas fa-info"></i> Info!</h5>
+                      Pastikan data yang di isikan sudah sesuai. Berikan tanda [V] pada check box di bawah ini untuk melanjutkan! <br>
+                      <div class="form-group row">
+                        <div class="offset-sm-0 col-sm-12">
+                          <div class="checkbox">
+                            <label>
+                              <input id="cb" type="checkbox"> Saya setuju
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                       <button type="button" class="btn btn-primary" onclick="stepper.previous()">Previous</button>
-                      <button type="submit" class="btn btn-primary">Submit</button>
+                      <button id="btnSubmit"type="submit" class="btn btn-primary" disabled="true">Submit</button>
                     </div>
                   </div>
                 </div>
@@ -333,5 +493,4 @@
         </div>
         <!-- /.modal-dialog -->
       </div>
-      
   @endsection

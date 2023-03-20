@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="{{asset('template/')}}/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="{{asset('template/')}}/dist/css/adminlte.min.css">
+  
 </head>
 <body class="hold-transition login-page">
 <div class="login-box" style="box-shadow: 10px 10px 5px #aaaaaa;">
@@ -22,20 +23,21 @@
   </div>
   <!-- /.login-logo -->
   <div class="card">
-    <div class="card-header text-center" style="background: url('bg.jpg') top;center;opacity: 0.9;position: cover">
+    <div class="card-header text-center bg-navy" style="background: url('polkadot.png') right;opacity: 0.9;position: cover;background-size: 60%;100%;background-repeat: no-repeat">
         <img src="logo1.png" alt="" style="width: 100px"><br>
         <label style="font-size: 18px">KOPERASI KARYAWAN <br>
         MAKMUR ALAM SEJAHTERA</label>
     </div>
-    <div class="card-body login-card-body">
+    <div class="card-body login-card-body" >
       <p class="login-box-msg">Masuk untuk memulai sesi Anda</p>
 
       <form action="{{ route('login') }}" method="post">
         @csrf
+       
         <div class="input-group mb-3">
-          <input name="telp" type="number" class="form-control @error('telp') is-invalid @enderror" placeholder="Nomor Whatsapp" value="{{ old('telp') }}" required autocomplete="telp" autofocus>
-          <div class="input-group-append">
-            <div class="input-group-text">
+          <input name="telp" type="text" maxlength="13"onkeypress="return event.charCode >= 48 && event.charCode <=57" class="form-control @error('telp') is-invalid @enderror" placeholder="Nomor Whatsapp" value="{{ old('telp') }}" required autocomplete="telp" autofocus>
+          <div class="input-group-append" >
+            <div class="input-group-text" >
               <span class="fas fa-phone"></span>
             </div>
           </div>
@@ -93,7 +95,7 @@
       </p>
     </div>
     <!-- /.login-card-body -->
-    <div class="card-footer" style="background: #d8f4fb">
+    <div class="card-footer" >
       <center><small><strong> Alamat Kantor:</strong><br>Jalan Raya Salatiga Solo KM. 8, Butuh, Tengaran, Pongge, Butuh, Kec. Tengaran, Kabupaten Semarang<br> Jawa Tengah 50775 </small></center>
     </div>
   </div>

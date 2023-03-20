@@ -14,8 +14,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="{{asset('template/')}}/plugins/fontawesome-free/css/all.min.css">
-  <!-- Theme style -->
-  <link rel="stylesheet" href="{{asset('template/')}}/dist/css/adminlte.min.css">
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="{{asset('template/')}}/plugins/daterangepicker/daterangepicker.css">
+
+  <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" href="{{asset('template/')}}/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+  <!-- Bootstrap Color Picker -->
+  <link rel="stylesheet" href="{{asset('template/')}}/plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.min.css">
+  <!-- Tempusdominus Bootstrap 4 -->
+  <link rel="stylesheet" href="{{asset('template/')}}/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
   <!-- Select2 -->
   <!-- <link rel="stylesheet" href="{{asset('template/')}}/plugins/select2/css/select2.min.css"> -->
   <link rel="stylesheet" href="{{asset('template/')}}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
@@ -23,6 +30,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="{{asset('template/')}}/plugins/bs-stepper/css/bs-stepper.min.css">
   <!-- Bootstrap4 Duallistbox -->
   <link rel="stylesheet" href="{{asset('template/')}}/plugins/bootstrap4-duallistbox/bootstrap-duallistbox.min.css">
+  <!-- dropzonejs -->
+  <link rel="stylesheet" href="{{asset('template/')}}/plugins/dropzone/min/dropzone.min.css">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{{asset('template/')}}/dist/css/adminlte.min.css">
+  <!-- SweetAlert2 -->
+  <link rel="stylesheet" href="{{asset('template/')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+  <!-- Toastr -->
+  <link rel="stylesheet" href="{{asset('template/')}}/plugins/toastr/toastr.min.css">
+  
 </head>
 <body class="hold-transition layout-top-nav layout-navbar-fixed">
 <div class="wrapper">
@@ -31,7 +47,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <nav class="main-header navbar navbar-expand-md navbar-light navbar-white">
     <div class="container">
     <a href="#" class="navbar-brand">
-        <img src="logo1.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-0" style="opacity: .8; height: 30px">
+        <img src="{{asset('logo1.png')}}" alt="AdminLTE Logo" class="brand-image img-circle elevation-0" style="opacity: .8; height: 30px">
         <span class="brand-text font-weight-light">Kopkar <strong> MAS</strong></span>
       </a>
 
@@ -98,28 +114,24 @@ scratch. This page gets rid of all links and provides the needed markup only.
         <!-- Notifications Dropdown Menu -->
         <li class="nav-item dropdown">
           <a class="nav-link" data-toggle="dropdown" href="#">
-            <i class="fas fa-globe" style="font-size: 20px"></i>
-            <span class="badge badge-danger navbar-badge">15</span>
+          <i class="far fa-bell"></i>
+            @if(count(auth()->user()->unreadNotifications) != 0)
+          <span class="badge badge-danger navbar-badge">{{count(auth()->user()->unreadNotifications)}}</span>
+          @else
+            @endif
+        </a>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+          <span class="dropdown-item dropdown-header">{{count(auth()->user()->unreadNotifications)}} Notifications</span>
+          @foreach(auth()->user()->unreadNotifications as $notification)
+          <div class="dropdown-divider"></div>
+          <a href="{{route('markasread', $notification->id)}}" class="dropdown-item">
+            <i class="fas fa-circle text-sm text-blue mr-2"></i> {{strip_tags($notification->data['user']['name'])}} <span class="float-right text-muted text-sm" style="font-size: 12px">{{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}</span><br> <span style="font-size: 14px">{{strip_tags($notification->data['request']['notif'])}}</span>
+            
+            <!-- <small class="float-right badge bg-blue text-sm">New</small> -->
           </a>
-          <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-            <span class="dropdown-header">15 Notifications</span>
+          @endforeach
             <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item">
-              <i class="fas fa-bullhorn mr-2"></i> Approval Pinjaman
-              <span class="float-right text-muted text-sm">3 mins</span>
-            </a>
-            <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item">
-              <i class="fas fa-bullhorn mr-2"></i> 8 friend requests
-              <span class="float-right text-muted text-sm">12 hours</span>
-            </a>
-            <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item">
-              <i class="fas fa-bullhorn mr-2"></i> 3 new reports
-              <span class="float-right text-muted text-sm">2 days</span>
-            </a>
-            <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+            <a href="{{route('bacaSemua')}}" class="dropdown-item dropdown-footer">Tandai baca semua</a>
           </div>
         </li>
         <li class="nav-item">
@@ -132,11 +144,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
   </nav>
   <!-- /.navbar -->
   <div class="modal fade show" id="modal-logout" style="display: none; padding-right: 17px;" aria-modal="true" role="dialog">
-    <div class="modal-dialog modal-md">
+    <div class="modal-dialog modal-sm">
       <div class="modal-content bg-default">
-        <div class="modal-header">
+        <div class="modal-header bg-navy">
           <!-- <h4 class="modal-title"></h4> -->
-          <img src="logo1.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-0" style="opacity: .8; height: 50px">
+          <img src="{{asset('logo1.png')}}" alt="AdminLTE Logo" class="brand-image img-circle elevation-0" style="opacity: .8; height: 50px">
           <span class="brand-text font-weight-light pl-2"><strong>{{auth()->user()->name}}</strong><br><small class="text-mute">{{auth()->user()->email}}</small></span>
           
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -167,18 +179,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
   </div>
   <!-- /.content-wrapper -->
 
-  <a id="back-to-top" href="#" class="btn btn-primary back-to-top no-print" role="button" aria-label="Scroll to top" style="border-radius: 45em">
-      <i class="fas fa-arrow-up"></i>
+  <a id="back-to-top" href="#" class="btn btn-primary back-to-top no-print" role="button" aria-label="Scroll to top" >
+      <i class="fas fa-chevron-up"></i>
     </a>
 
   <!-- Main Footer -->
   <footer class="main-footer no-print">
     <!-- To the right -->
     <div class="float-right d-none d-sm-inline">
-      Anything you want
+      
     </div>
     <!-- Default to the left -->
-    <strong>Copyright &copy; 2014-2021 <a href="https://adminlte.io">AdminLTE.io</a>.</strong> All rights reserved.
+    <center><span>Copyright &copy; 2023 <a href="#">kopkarmas.com</a>.</span> All rights reserved.</center>
   </footer>
 </div>
 <!-- ./wrapper -->
@@ -189,12 +201,35 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="{{asset('template/')}}/plugins/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
 <script src="{{asset('template/')}}/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap4 Duallistbox -->
+<script src="{{asset('template/')}}/plugins/bootstrap4-duallistbox/jquery.bootstrap-duallistbox.min.js"></script>
+<!-- InputMask -->
+<script src="{{asset('template/')}}/plugins/moment/moment.min.js"></script>
+<script src="{{asset('template/')}}/plugins/inputmask/jquery.inputmask.min.js"></script>
+<!-- date-range-picker -->
+<script src="{{asset('template/')}}/plugins/daterangepicker/daterangepicker.js"></script>
+<!-- bootstrap color picker -->
+<script src="{{asset('template/')}}/plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.min.js"></script>
+<!-- Tempusdominus Bootstrap 4 -->
+<script src="{{asset('template/')}}/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+<!-- Bootstrap Switch -->
+<script src="{{asset('template/')}}/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
 <!-- Select2 -->
 <!-- <script src="{{asset('template/')}}/plugins/select2/js/select2.full.min.js"></script> -->
 <!-- BS-Stepper -->
 <script src="{{asset('template/')}}/plugins/bs-stepper/js/bs-stepper.min.js"></script>
+<!-- dropzonejs -->
+<script src="{{asset('template/')}}/plugins/dropzone/min/dropzone.min.js"></script>
 <!-- AdminLTE App -->
 <script src="{{asset('template/')}}/dist/js/adminlte.min.js"></script>
+<!-- jQuery Knob -->
+<script src="{{asset('template/')}}/plugins/jquery-knob/jquery.knob.min.js"></script>
+<!-- Sparkline -->
+<script src="{{asset('template/')}}/plugins/sparklines/sparkline.js"></script>
+<!-- SweetAlert2 -->
+<script src="{{asset('template/')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
+<!-- Toastr -->
+<script src="{{asset('template/')}}/plugins/toastr/toastr.min.js"></script>
 <script>
   $(function () {
     //Initialize Select2 Elements
@@ -365,68 +400,336 @@ scratch. This page gets rid of all links and provides the needed markup only.
     }
 </script>
 
-<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript">
   const jns = document.getElementById('jns_krdt');
   const f_brg = document.getElementById('f-barang');
-  const f_mtr = document.getElementById('f-kendaraan');
+  const f_mtr = document.getElementById('f-k');
   const f_tn = document.getElementById('f-tunai');
   const f_beli = document.getElementById('f-beli');
 
-  const list2 = document.getElementById('list2');
+
+  const nb = document.getElementById('nm_brg')
+  const sp = document.getElementById('spek')
+  const jb = document.getElementById('jml_brng')
+  const nk = document.getElementById('nm_kendaraan')
+  const ju = document.getElementById('jml_unit')
+  const kn = document.getElementById('kondisi')
+  const bo = document.getElementById('beli_oleh')
+  const kp = document.getElementById('keperluan')
+
+  const knds1 = document.getElementById('radioPrimary1')
+  const knds2 = document.getElementById('radioPrimary2')
+  const beli1 = document.getElementById('radioDanger1')
+  const beli2 = document.getElementById('radioDanger2')
+  var x = document.getElementById('tenor');
 
 
   jns.addEventListener('change', () => {
     // Periksa nilai select input
-    if (jns.value === 'BARANG') {
+    if (jns.value == 'BARANG') {
       // Jika nilai adalah 1, tampilkan elemen
       f_brg.style.display = 'block';
-      list2.style.display = 'block';
       f_mtr.style.display = 'none';
       f_tn.style.display = 'none';
       f_beli.style.display = 'block';
-    } else if (jns.value === 'KENDARAAN') {
+      nk.value = '';
+      ju.value = '';
+      knds1.checked = false;
+      knds2.checked = false;
+      kp.value = '';
+      x.options[1].classList.remove('d-none');
+      x.options[2].classList.remove('d-none');
+      x.options[3].classList.remove('d-none');
+      x.options[4].classList.remove('d-none');
+      x.options[5].classList.remove('d-none');
+      x.options[6].classList.remove('d-none');
+      x.options[7].classList.remove('d-none');
+      x.options[8].classList.remove('d-none');
+      x.options[9].classList.remove('d-none');
+      x.options[10].classList.remove('d-none');
+      x.options[11].classList.remove('d-none');
+      x.options[12].classList.remove('d-none');
+      x.options[13].classList.add('d-none');
+      x.options[14].classList.add('d-none');
+      x.options[15].classList.add('d-none');
+      x.options[16].classList.add('d-none');
+      x.options[17].classList.add('d-none');
+      x.options[18].classList.add('d-none');
+      x.options[19].classList.add('d-none');
+      x.options[20].classList.add('d-none');
+      x.options[21].classList.add('d-none');
+      x.options[22].classList.add('d-none');
+      x.options[23].classList.add('d-none');
+      x.options[24].classList.add('d-none');
+    } else if (jns.value == 'KENDARAAN') {
       // Jika nilai adalah 1, tampilkan elemen
       f_brg.style.display = 'none';
-      list2.style.display = 'none';
       f_mtr.style.display = 'block';
       f_tn.style.display = 'none';
       f_beli.style.display = 'block';
-    } else if (jns.value === 'TUNAI') {
+      nb.value = '';
+      jb.value = '';
+      kp.value = '';
+      x.options[1].classList.remove('d-none');
+      x.options[2].classList.remove('d-none');
+      x.options[3].classList.remove('d-none');
+      x.options[4].classList.remove('d-none');
+      x.options[5].classList.remove('d-none');
+      x.options[6].classList.remove('d-none');
+      x.options[7].classList.remove('d-none');
+      x.options[8].classList.remove('d-none');
+      x.options[9].classList.remove('d-none');
+      x.options[10].classList.remove('d-none');
+      x.options[11].classList.remove('d-none');
+      x.options[12].classList.remove('d-none');
+      x.options[13].classList.remove('d-none');
+      x.options[14].classList.remove('d-none');
+      x.options[15].classList.remove('d-none');
+      x.options[16].classList.remove('d-none');
+      x.options[17].classList.remove('d-none');
+      x.options[18].classList.remove('d-none');
+      x.options[19].classList.remove('d-none');
+      x.options[20].classList.remove('d-none');
+      x.options[21].classList.remove('d-none');
+      x.options[22].classList.remove('d-none');
+      x.options[23].classList.remove('d-none');
+      x.options[24].classList.remove('d-none');
+    } else if (jns.value == 'TUNAI') {
       // Jika nilai adalah 1, tampilkan elemen
       f_brg.style.display = 'none';
-      list2.style.display = 'none';
       f_mtr.style.display = 'none';
       f_tn.style.display = 'block';
       f_beli.style.display = 'none';
-
+      nk.value = '';
+      ju.value = '';
+      knds1.checked = false;
+      knds2.checked = false;
+      nb.value = '';
+      jb.value = '';
+      beli1.checked = false;
+      beli2.checked = false;
+      sp.value = '';
+      x.options[1].classList.remove('d-none');
+      x.options[2].classList.remove('d-none');
+      x.options[3].classList.remove('d-none');
+      x.options[4].classList.remove('d-none');
+      x.options[5].classList.remove('d-none');
+      x.options[6].classList.add('d-none');
+      x.options[7].classList.add('d-none');
+      x.options[8].classList.add('d-none');
+      x.options[9].classList.add('d-none');
+      x.options[10].classList.add('d-none');
+      x.options[11].classList.add('d-none');
+      x.options[12].classList.add('d-none');
+      x.options[13].classList.add('d-none');
+      x.options[14].classList.add('d-none');
+      x.options[15].classList.add('d-none');
+      x.options[16].classList.add('d-none');
+      x.options[17].classList.add('d-none');
+      x.options[18].classList.add('d-none');
+      x.options[19].classList.add('d-none');
+      x.options[20].classList.add('d-none');
+      x.options[21].classList.add('d-none');
+      x.options[22].classList.add('d-none');
+      x.options[23].classList.add('d-none');
+      x.options[24].classList.add('d-none');
     } else {
       // Jika nilai bukan 1, sembunyikan elemen
       f_brg.style.display = 'none';
       f_mtr.style.display = 'none';
       f_tn.style.display = 'none';
       f_beli.style.display = 'none';
+      x.options[1].classList.add('d-none');
+      x.options[2].classList.add('d-none');
+      x.options[3].classList.add('d-none');
+      x.options[4].classList.add('d-none');
+      x.options[5].classList.add('d-none');
+      x.options[6].classList.add('d-none');
+      x.options[7].classList.add('d-none');
+      x.options[8].classList.add('d-none');
+      x.options[9].classList.add('d-none');
+      x.options[10].classList.add('d-none');
+      x.options[11].classList.add('d-none');
+      x.options[12].classList.add('d-none');
+      x.options[13].classList.add('d-none');
+      x.options[14].classList.add('d-none');
+      x.options[15].classList.add('d-none');
+      x.options[16].classList.add('d-none');
+      x.options[17].classList.add('d-none');
+      x.options[18].classList.add('d-none');
+      x.options[19].classList.add('d-none');
+      x.options[20].classList.add('d-none');
+      x.options[21].classList.add('d-none');
+      x.options[22].classList.add('d-none');
+      x.options[23].classList.add('d-none');
+      x.options[24].classList.add('d-none');
     }
   });
 
-
 </script>
 <script>
-    $(".form-horizontal").keyup(function() {
-  var jns = document.getElementById('jns_krdt')
-  var nb = document.getElementById('nm_brg')
-  var plaf = document.getElementById('tanpa-rupiah')
-  var ten = document.getElementById('tenor')
-  // var nom = parseInt(plaf.val())
+  $(function () {
+    /* jQueryKnob */
 
-  document.getElementById('v_nm_brg').innerHTML = nb.value;
-  document.getElementById('v_jns_krdt').innerHTML = jns.value;
-  document.getElementById('v_plafon').innerHTML = plaf.value;
-  document.getElementById('v_tenor').innerHTML = ten.value;
-  // document.getElementById('v_angsuran').innerHTML = nom.value;
+    $('.knob').knob({
+      /*change : function (value) {
+       //console.log("change : " + value);
+       },
+       release : function (value) {
+       console.log("release : " + value);
+       },
+       cancel : function () {
+       console.log("cancel : " + this.value);
+       },*/
+      draw: function () {
+
+        // "tron" case
+        if (this.$.data('skin') == 'tron') {
+
+          var a   = this.angle(this.cv)  // Angle
+            ,
+              sa  = this.startAngle          // Previous start angle
+            ,
+              sat = this.startAngle         // Start angle
+            ,
+              ea                            // Previous end angle
+            ,
+              eat = sat + a                 // End angle
+            ,
+              r   = true
+
+          this.g.lineWidth = this.lineWidth
+
+          this.o.cursor
+          && (sat = eat - 0.3)
+          && (eat = eat + 0.3)
+
+          if (this.o.displayPrevious) {
+            ea = this.startAngle + this.angle(this.value)
+            this.o.cursor
+            && (sa = ea - 0.3)
+            && (ea = ea + 0.3)
+            this.g.beginPath()
+            this.g.strokeStyle = this.previousColor
+            this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, sa, ea, false)
+            this.g.stroke()
+          }
+
+          this.g.beginPath()
+          this.g.strokeStyle = r ? this.o.fgColor : this.fgColor
+          this.g.arc(this.xy, this.xy, this.radius - this.lineWidth, sat, eat, false)
+          this.g.stroke()
+
+          this.g.lineWidth = 2
+          this.g.beginPath()
+          this.g.strokeStyle = this.o.fgColor
+          this.g.arc(this.xy, this.xy, this.radius - this.lineWidth + 1 + this.lineWidth * 2 / 3, 0, 2 * Math.PI, false)
+          this.g.stroke()
+
+          return false
+        }
+      }
+    })
+    /* END JQUERY KNOB */
+
+    //INITIALIZE SPARKLINE CHARTS
+    var sparkline1 = new Sparkline($('#sparkline-1')[0], { width: 240, height: 70, lineColor: '#92c1dc', endColor: '#92c1dc' })
+    var sparkline2 = new Sparkline($('#sparkline-2')[0], { width: 240, height: 70, lineColor: '#f56954', endColor: '#f56954' })
+    var sparkline3 = new Sparkline($('#sparkline-3')[0], { width: 240, height: 70, lineColor: '#3af221', endColor: '#3af221' })
+
+    sparkline1.draw([1000, 1200, 920, 927, 931, 1027, 819, 930, 1021])
+    sparkline2.draw([515, 519, 520, 522, 652, 810, 370, 627, 319, 630, 921])
+    sparkline3.draw([15, 19, 20, 22, 33, 27, 31, 27, 19, 30, 21])
+
+  })
+</script>
+<script type="text/javascript">
+$('#cb').click(function(){
+    //If the checkbox is checked.
+    if($(this).is(':checked')){
+        //Enable the submit button.
+        $('#btnSubmit').attr("disabled", false);
+    } else{
+        //If it is not checked, disable the button.
+        $('#btnSubmit').attr("disabled", true);
+    }
 });
 </script>
-
+<script>
+  $("input[type='submit']").click(function(){
+  $("div.spanner").addClass("show");
+  $("div.overlay").addClass("show");
+});
 </script>
+<!-- sweatalert -->
+@if (Session::has('success'))
+  <script>
+      $(function() {
+    var Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
+    Toast.fire({
+        icon: "success",
+        title: "{!! session::get('success') !!}"
+      })
+    })
+  </script>
+@endif
+@if (Session::has('error'))
+  <script>
+      $(function() {
+    var Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
+    Toast.fire({
+          icon: "error",
+          title: "{!! session::get('error') !!}"
+        })
+    })
+  </script>
+@endif
+@if (Session::has('warning'))
+  <script>
+      $(function() {
+    var Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
+  
+    Toast.fire({
+      icon: "warning",
+      title: "{!! session::get('warning') !!}"
+    })
+
+    })
+  </script>
+@endif
+@if (Session::has('question'))
+  <script>
+      $(function() {
+    var Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000
+    });
+
+    Toast.fire({
+      icon: "question",
+      title: "{!! session::get('question') !!}"
+    })
+    
+
+    })
+  </script>
+@endif
 </body>
 </html>

@@ -1,5 +1,5 @@
 @extends('layouts.v_appAnggota')
-@section('title','Simpanan')
+@section('title','Detail Kredit')
 @section('content')
     <!-- Content Header (Page header) -->
     <div class="content-header">
@@ -12,133 +12,212 @@
       </div><!-- /.container-fluid -->
     </div>
     <!-- /.content-header -->
-
+    @foreach ($kredit as $data)
     <!-- Main content -->
     <div class="content">
       <div class="container">
         <div class="row">
           <div class="col-12">
           <div class="invoice p-3 mb-3">
-              <!-- title row -->
-                <div class="card-footer card-comments">
-                    <div class="card-comment">
-                    <!-- User image -->
-                    <img src="logo1.png" alt="User Image" style="width: 50px;height: 50px">
 
-                    <div class="comment-text" style="padding-left: 2%">
-                        <span class="username" >
-                        KOPKAR MAKMUR ALAM SEJAHTERA
-                        <span class="text-muted float-right">Tanggal pengajuan : {{Carbon\Carbon::parse(now())->isoFormat("D MMMM Y")}}</span>
-                        </span><!-- /.username -->
-                        Jl. Raya Salatiga No.23 Ds. Butuh Kab. Semarang Provinsi Jawa Tengah 
-                    </div>
-                    <!-- /.comment-text -->
-                    </div>
-                </div>
-                <!-- /.col -->
               <!-- info row -->
-              <div class="row invoice-info">
-                <div class="col-sm-4 invoice-col">
-                  <strong>Kreditur</strong>
-                  <address>
-                    <strong style="font-size: 22px">YAHYA AL MUNAWAR</strong><br>
-                    Jalan Mawar No.24<br>
-                    Kalikajar, Purbalingga<br>
-                    Phone: 086535637777<br>
-                    Email: yahya234@gmail.com
-                  </address>
+           <div class="row">
+            <div class="col-md-12">
+              <div class="card card-widget widget-user">
+                <!-- Add the bg color to the header using any of the bg-* classes -->
+                <div class="widget-user-header bg-navy">
+                  <h3 class="widget-user-username">{{$data->nama}}</h3>
+                  <!-- <h5 class="widget-user-desc"> {{$data->nik_ktp}} </h5> -->
+
                 </div>
-                <!-- /.col -->
-                <div class="col-sm-4 invoice-col">
-                  <strong> Info Kredit</strong>
-                  <address>
-                    Kendaraan Bermotor<br>
-                    YAMAHA N-MAX<br>
-                    250 cc / Hitam<br>
-                  </address>
+                
+                <div class="widget-user-image">
+                  <img class="img-circle elevation-2" src="{{asset('template/')}}/dist/img/user7-128x128.jpg" alt="User Avatar">
+
                 </div>
-                <!-- /.col -->
-                <div class="col-sm-4 invoice-col">
-                  <b>No. #007612</b><br>
-                  <br>
-                  <b>Order ID:</b> 4F3S8J<br>
-                  <b>Jatuh Tempo:</b> 2/22/2014<br>
-                  <b>Status:</b> <span class="badge bg-success">LUNAS</span>
+
+                <div class="card-footer">
+                  <form class="form-horizontal">
+                  <div class="form-group row ">
+                      <label class="col-sm-3 control-label"> KODE TRANSAKSI</label> 
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control"value="{{$data->kd_kredit}}" readonly>
+                      </div>
+                    </div>
+                    <div class="form-group row ">
+                      <label class="col-sm-3 control-label"> JENIS KREDIT</label> 
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control"value="{{$data->jns_krdt}}" readonly>
+                      </div>
+                    </div>
+                    <div class="form-group row <?php if($data->nm_brg == null) echo 'd-none'; else echo ''; ?>">
+                      <label class="col-sm-3 control-label"> NAMA BARANG</label> 
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control"value="{{$data->nm_brg}}" readonly>
+                      </div>
+                    </div>
+                    <div class="form-group row <?php if($data->jml_brng == null) echo 'd-none'; else echo ''; ?>">
+                      <label class="col-sm-3 control-label"> JUMLAH BARANG</label> 
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control"value="{{$data->jml_brng}}" readonly>
+                      </div>
+                    </div>
+                    <div class="form-group row <?php if($data->nm_kendaraan == null) echo 'd-none'; else echo ''; ?>">
+                      <label class="col-sm-3 control-label"> NAMA KENDARAAN</label> 
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control"value="{{$data->nm_kendaraan}}" readonly>
+                      </div>
+                    </div>
+                    <div class="form-group row <?php if($data->kondisi == null) echo 'd-none'; else echo ''; ?>">
+                      <label class="col-sm-3 control-label"> KONDISI</label> 
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control"value="{{$data->kondisi}}" readonly>
+                      </div>
+                    </div>
+                    <div class="form-group row <?php if($data->jml_unit == null) echo 'd-none'; else echo ''; ?>">
+                      <label class="col-sm-3 control-label"> JUMLAH UNIT</label> 
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control"value="{{$data->jml_unit}}" readonly>
+                      </div>
+                    </div>
+                    <div class="form-group row <?php if($data->spek == null) echo 'd-none'; else echo ''; ?>">
+                      <label class="col-sm-3 control-label"> SPESIFIKAsi</label> 
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control"value="{{$data->spek}}" readonly>
+                      </div>
+                    </div>
+                    <div class="form-group row <?php if($data->beli_oleh == null) echo 'd-none'; else echo ''; ?>">
+                      <label class="col-sm-3 control-label"> PEMBELIAN OLEH</label> 
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control"value="{{$data->beli_oleh}}" readonly>
+                      </div>
+                    </div>
+                    <div class="form-group row <?php if($data->keperluan == null) echo 'd-none'; else echo ''; ?>">
+                      <label class="col-sm-3 control-label"> KEPERLUAN</label> 
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control"value="{{$data->keperluan}}" readonly>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-3 control-label"> PLAFON KREDIT</label> 
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control"value="@currency($data->nominal)" readonly>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label class="col-sm-3 control-label"> TENOR</label> 
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control"value="{{$data->tenor}} bulan" readonly>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                    <label class="col-sm-3 control-label"> JATUH TEMPO</label> 
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control"value="{{Carbon\Carbon::parse($data->tempo)->isoFormat('D MMMM Y')}}" readonly>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                    <label class="col-sm-3 control-label"> ANGSURAN</label> 
+                      <div class="col-sm-9">
+                        <input type="text" class="form-control"value="@currency($data->angsuran)" readonly>
+                      </div>
+                    </div>
+                  </form>
+                  <!-- /.row -->
                 </div>
-                <!-- /.col -->
               </div>
+
+            </div>
+           </div>
               <!-- /.row -->
 
               <!-- Table row -->
               <div class="row">
-                <div class="col-12 table-responsive">
-                  <table class="table table-striped">
+                <div class="col-sm-8 table-responsive">
+                  <table class="table table-striped " >
                     <thead>
+                      <tr colspan=""><strong>TABEL ANGSURAN</strong></tr>
                     <tr>
-                      <th>No</th>
-                      <th>Bulan</th>
+                      <th width="8%">No</th>
                       <th>Tanggal</th>
-                      <th>Angsuran</th>
+                      <th>Nilai Angsuran</th>
+                      <th>Metode</th>
                     </tr>
                     </thead>
                     <tbody>
+                      @php
+                      $no=1;
+                      @endphp
+                      @foreach ($angsuran as $item)
                     <tr>
-                      <td>1</td>
-                      <td>Call of Duty</td>
-                      <td>455-981-221</td>
-                      <td>$64.50</td>
+                      <td>{{$no++}}</td>
+                      <td>{{Carbon\Carbon::parse($data->tgl_angsuran)->isoFormat("D MMMM Y")}}</td>
+                      <td>@currency($item->jml_angsuran)</td>
+                      @if($item->metode == 1)
+                      <td>TUNAI</td>
+                      @elseif($item->metode == 2)
+                      <td>TRANSFER</td>
+                      @elseif($item->metode == 3)
+                      <td>POTONG GAJI</td>
+                      @endif
                     </tr>
-                    <tr>
-                      <td>1</td>
-                      <td>Need for Speed IV</td>
-                      <td>247-925-726</td>
-                      <td>$50.00</td>
-                    </tr>
-                    <tr>
-                      <td>1</td>
-                      <td>Monsters DVD</td>
-                      <td>735-845-642</td>
-                      <td>$10.70</td>
-                    </tr>
-                    <tr>
-                      <td>1</td>
-                      <td>Grown Ups Blue Ray</td>
-                      <td>422-568-642</td>
-                      <td>$25.99</td>
-                    </tr>
+                    @endforeach
+                   
                     </tbody>
                   </table>
                 </div>
                 <!-- /.col -->
+                <div class="col-sm-4">
+                @foreach ($ttlAngsuran as $item)
+                @php
+                $a = $item->ttl_angsuran;
+                $b = $ttlKredit;
+                $ttl = round($a/$b*100,2);
+                @endphp
+                  <div class="text-center pt-4">
+                    <input type="text" class="knob" value="{{$ttl}}" data-width="160" data-height="160" data-fgColor="<?php if($ttl < 100) echo 'red';else echo 'green';?>" data-readonly="true" >
+                    <div class="knob-label text-red">
+                      @if($ttl < 100)
+                      <span class="badge bg-red"> BELUM LUNAS</span>
+                      @elseif($ttl >= 100)
+                      <span class="badge bg-green"> SUDAH LUNAS</span>
+                      @endif
+                    </div>  
+                    <!-- <div class="knob-label text-green"><b> LUNAS</b></div>   -->
+                  </div>
+                </div>
               </div>
               <!-- /.row -->
 
               <div class="row ">
                 <!-- accepted payments column -->
-                <div class="col-4">
-                </div>
+                <!-- <div class="col-sm-4">
+                  <div class="text-center pt-4">
+                    <input type="text" class="knob" value="30" data-width="120" data-height="120" data-fgColor="red" data-readonly="true" >
+                    <div class="knob-label text-red"><b> BELUM LUNAS</b></div>  
+                  </div>
+                </div> -->
                
-                <div class="col-8">
-                  <p class="lead">Amount Due 2/22/2014</p>
+                <div class="col-sm-8">
+                  <p class="lead"></p>
 
                   <div class="table-responsive">
                     <table class="table">
                       <tbody><tr>
-                        <th style="width:50%">Subtotal:</th>
-                        <td>$250.30</td>
+                        <th style="width:50%">TOTAL KREDIT</th>
+                        <td>@currency($ttlKredit)</td>
                       </tr>
                       <tr>
-                        <th>Tax (9.3%)</th>
-                        <td>$10.34</td>
+                        <th>TOTAL ANGSURAN</th>
+                        
+                        <td>@currency($item->ttl_angsuran)</td>
+                       
                       </tr>
-                      <tr>
-                        <th>Shipping:</th>
-                        <td>$5.80</td>
+                      <tr class="text-red">
+                        <th>SISA ANGSURAN</th>
+                        <td>@currency($item->ttl_angsuran-$ttlKredit)</td>
                       </tr>
-                      <tr>
-                        <th>Total:</th>
-                        <td>$265.24</td>
-                      </tr>
+                      @endforeach
                     </tbody></table>
                   </div>
                 </div>
@@ -147,18 +226,7 @@
               <!-- /.row -->
 
               <!-- this row will not appear when printing -->
-              <div class="row no-print">
-                <div class="col-12">
-                  <a href="/cetak-detail-kredit-anggota" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Cetak</a>
-                  <!-- <button type="button" class="btn btn-success float-right"><i class="far fa-credit-card"></i> Submit
-                    Payment
-                  </button> 
-                  
-                  <button type="button" class="btn btn-primary " style="margin-right: 5px;">
-                    <i class="fas fa-download"></i> Simpan
-                  </button> -->
-                </div>
-              </div>
+     
             </div>
           </div>
         </div>
@@ -166,7 +234,8 @@
       </div><!-- /.container-fluid -->
     </div>
     <!-- /.content -->
+    @endforeach
+
 <!-- ./wrapper -->
 <!-- Page specific script -->
-
   @endsection
