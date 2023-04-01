@@ -2,6 +2,7 @@
 @section('title','Kredit')
 @section('content')
     <!-- Content Header (Page header) -->
+    <div class="loader " style="display: none"></div>
     <div class="content-header">
       <div class="container">
         <div class="row">
@@ -9,7 +10,7 @@
             <a href="/" style="font-size: 20px"><i class="fas fa-arrow-circle-left" ></i> Kembali</a>
             <div class="float-right">
             <!-- <button class="btn btn-sm " style="font-size: 20px;background:#32599e;color:#fff" data-toggle="modal" data-target="#tambah-kredit"><i class="fas fa-plus-circle" ></i> Tambah Kredit</button> -->
-            <a href="#" class="btn btn-primary no-print <?php if($ttlKredit-$ttlAngsuran == 0) echo ''; else echo 'disabled';?>" role="button" aria-label="Scroll to top" style="border-radius: 45em" data-toggle="modal" data-target="#tambah-kredit">
+            <a href="#" class="btn btn-primary no-print <?php if($ttlKredit-$ttlAngsuran == 0 || auth()->user()->status_user == 1) echo ''; else echo 'disabled';?>" role="button" aria-label="Scroll to top" style="border-radius: 45em" data-toggle="modal" data-target="#tambah-kredit">
               <i class="fas fa-plus"></i> Kredit Baru
             </a>            
           </div>
@@ -34,73 +35,7 @@
                   @currency($sisa)
                 </p>
                 <p>
-                  @php 
-                  function terbilang($sisa)
-        {
-        $sisa = abs($sisa);
-        $words = array(
-            0 => '',
-            1 => 'satu',
-            2 => 'dua',
-            3 => 'tiga',
-            4 => 'empat',
-            5 => 'lima',
-            6 => 'enam',
-            7 => 'tujuh',
-            8 => 'delapan',
-            9 => 'sembilan',
-            10 => 'sepuluh',
-            11 => 'sebelas',
-            12 => 'dua belas',
-            13 => 'tiga belas',
-            14 => 'empat belas',
-            15 => 'lima belas',
-            16 => 'enam belas',
-            17 => 'tujuh belas',
-            18 => 'delapan belas',
-            19 => 'sembilan belas',
-            20 => 'dua puluh',
-            30 => 'tiga puluh',
-            40 => 'empat puluh',
-            50 => 'lima puluh',
-            60 => 'enam puluh',
-            70 => 'tujuh puluh',
-            80 => 'delapan puluh',
-            90 => 'sembilan puluh'
-        );
-     
-        $result = '';
-     
-        if ($sisa < 0) {
-            $result = 'minus ';
-            $sisa = abs($sisa);
-        }
-     
-        if ($sisa < 21) {
-            $result .= $words[$sisa];
-        } elseif ($sisa < 100) {
-            $result .= $words[10 * floor($sisa / 10)];
-            $remainder = $sisa % 10;
-            if ($remainder) {
-                $result .= ' ' . $words[$remainder];
-            }
-        } elseif ($sisa < 200) {
-            $result .= 'seratus ' . terbilang($sisa - 100);
-        } elseif ($sisa < 1000) {
-            $result .= terbilang(floor($sisa / 100)) . ' ratus ' . terbilang($sisa % 100);
-        } elseif ($sisa < 2000) {
-            $result .= 'seribu ' . terbilang($sisa - 1000);
-        } elseif ($sisa < 1000000) {
-            $result .= terbilang(floor($sisa / 1000)) . ' ribu ' . terbilang($sisa % 1000);
-        } elseif ($sisa < 1000000000) {
-            $result .= terbilang(floor($sisa / 1000000)) . ' juta ' . terbilang($sisa % 1000000);
-        } else {
-            $result .= 'Lebih dari 1 milyar';
-        }
-     
-        return $result;
-          }
-                  @endphp
+                 
                   {{ strtoupper(terbilang($sisa))}} RUPIAH
                 </p>
               </div>
@@ -226,17 +161,19 @@
                                         @endif
                                       </div>
                                     </dd>
-                                    <dt class="col-sm-2">Status</dt>
+                                    
                                   
-                                    <dd class="col-sm-5">
-                                    @if($data->total == $data->jmlAngsuran)
-                                    <span class="badge bg-success">LUNAS</span>
-                                    @elseif($data->total < $data->jmlAngsuran)
-                                    <span class="badge bg-warning">LEBIH ANGSURAN</span>
-                                    @elseif($data->total > $data->jmlAngsuran)
-                                    <span class="badge bg-danger">BELUM LUNAS</span>
+                                    
+                                    @if($data->app_ket == 1 && $data->total == $data->jmlAngsuran)
+                                    <dt class="col-sm-2">Status</dt><dd class="col-sm-5"><span class="badge bg-success">LUNAS</span></dd>
+                                    @elseif($data->app_ket == 1 && $data->total < $data->jmlAngsuran)
+                                    <dt class="col-sm-2">Status</dt><dd class="col-sm-5"><span class="badge bg-danger">LEBIH ANGSURAN</span></dd>
+                                    @elseif($data->app_ket == 1 && $data->total > $data->jmlAngsuran)
+                                    <dt class="col-sm-2">Status</dt><dd class="col-sm-5"><span class="badge bg-danger">BELUM LUNAS</span></dd>
+                                    @else
+                                    
                                     @endif
-                                    </dd>
+                                    
                                 </dl>
                               </div>
                           </div>
@@ -381,23 +318,24 @@
                               </div>
                             </div>
                           </div>
-                        <div class="form-group row">
+                          <input id="beli_oleh"name="beli_oleh" type="hidden" value="Koperasi">
+                        <!-- <div class="form-group row">
                             <label class="col-sm-4 col-form-label">Pembelian Oleh<span class="text-danger">*</span></label>
                             <div class="col-sm-8">
-                              <div class="form-group clearfix">
-                                <div class="icheck-primary d-inline">
+                              <div class="form-group clearfix"> -->
+                                <!-- <div class="icheck-primary d-inline">
                                   <input type="radio" id="radioDanger1" name="beli_oleh" value="Koperasi">
                                   <label for="radioDanger1">Koperasi
                                   </label>
-                                </div>
-                                <div class="icheck-primary d-inline">
+                                </div> -->
+                                <!-- <div class="icheck-primary d-inline">
                                   <input type="radio" id="radioDanger2" name="beli_oleh" value="Sendiri">
                                   <label for="radioDanger2">Sendiri
                                   </label>
-                                </div>
-                            </div>
+                                </div> -->
+                            <!-- </div>
                           </div>
-                      </div>
+                      </div> -->
                     </div>
                   <!-- end dibeli oleh -->
                   <!-- option 3 -->     
@@ -462,8 +400,12 @@
                       <button id="btnView" type="button"class="btn btn-primary" onclick="stepper.next()">Next</button>
                     </div>
                     <div id="konfirmasi-part" class="content active dstepper-block" role="tabpanel" aria-labelledby="konfirmasi-part-trigger">
-                    <div class="alert alert-default alert-dismissible" style="border: 2px solid orange">
+                    <div id="load" class="overlay d-none">
+                <i class="fas fa-2x fa-spinner fa-spin"></i>
+            </div>
+                    <div class="alert alert-default alert-dismissible " style="border: 2px solid orange">
                       <!-- <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> -->
+
                       <h5><i class="icon fas fa-info"></i> Info!</h5>
                       Pastikan data yang di isikan sudah sesuai. Berikan tanda [V] pada check box di bawah ini untuk melanjutkan! <br>
                       <div class="form-group row">
@@ -477,7 +419,7 @@
                       </div>
                     </div>
                       <button type="button" class="btn btn-primary" onclick="stepper.previous()">Previous</button>
-                      <button id="btnSubmit"type="submit" class="btn btn-primary" disabled="true">Submit</button>
+                      <button id="btnSubmit"type="submit" class="btn btn-primary"  onclick="loading()" disabled="true"> Submit</button>
                     </div>
                   </div>
                 </div>

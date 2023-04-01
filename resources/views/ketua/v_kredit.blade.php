@@ -6,13 +6,13 @@
       <div class="container">
         <div class="row mb-0">
           <div class="col-sm-6">
-            <h4> KREDIT ANGGOTA</h4>
+            <!-- <h4> KREDIT ANGGOTA</h4> -->
           </div><!-- /.col -->
           <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
+            <!-- <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="/">Home</a></li>
               <li class="breadcrumb-item active">Kredit Pinjaman</li>
-            </ol>
+            </ol> -->
           </div><!-- /.col -->
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->

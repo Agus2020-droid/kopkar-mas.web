@@ -65,7 +65,7 @@
             <div class="icheck-primary">
               <input type="checkbox" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }}>
               <label for="remember">
-                Remember Me
+                Ingatkan saya
               </label>
             </div>
           </div>
@@ -96,7 +96,7 @@
     </div>
     <!-- /.login-card-body -->
     <div class="card-footer" >
-      <center><small><strong> Alamat Kantor:</strong><br>Jalan Raya Salatiga Solo KM. 8, Butuh, Tengaran, Pongge, Butuh, Kec. Tengaran, Kabupaten Semarang<br> Jawa Tengah 50775 </small></center>
+      <center><small><strong> Alamat Kantor:</strong><br>Jalan Raya Salatiga - Solo Km. 08, Ds. Butuh, <br> Kec. Tengaran, Kab. Semarang <br> JAWA TENGAH 50775 </small></center>
     </div>
   </div>
 </div>

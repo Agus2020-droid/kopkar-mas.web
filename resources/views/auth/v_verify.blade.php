@@ -14,7 +14,7 @@
                         </div>
                     @endif
                     <label for="">Verifikasi Email</label><br>
-                    {{ __('Untuk melanjutkan, mohon cek email Anda untuk link verifikasi.') }}
+                    {{ __('Untuk melanjutkan, silahkan cek folder email masuk Anda.') }}
                     {{ __('Jika belum terima email') }},
                     <form class="d-inline" method="POST" action="{{ route('verification.resend') }}">
                         @csrf

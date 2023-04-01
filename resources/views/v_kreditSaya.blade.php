@@ -1,6 +1,7 @@
 @extends('layouts.v_app')
 @section('title','Kredit Saya')
 @section('content')
+
     <!-- Content Header (Page header) -->
     <div class="content-header">
       <div class="container">
@@ -8,7 +9,7 @@
           <div class="col-sm-12">
             <div class="float-right">
             <!-- <button class="btn btn-sm " style="font-size: 20px;background:#32599e;color:#fff" data-toggle="modal" data-target="#tambah-kredit"><i class="fas fa-plus-circle" ></i> Tambah Kredit</button> -->
-            <a href="#" class="btn btn-primary no-print <?php if($ttlKredit-$ttlAngsuran == 0) echo ''; else echo 'disabled';?>" role="button" aria-label="Scroll to top" style="border-radius: 45em" data-toggle="modal" data-target="#tambah-kredit">
+            <a href="#" class="btn btn-primary no-print <?php if($ttlKredit-$ttlAngsuran == 0 || auth()->user()->status_user == 1) echo ''; else echo 'disabled';?>" role="button" aria-label="Scroll to top" style="border-radius: 45em" data-toggle="modal" data-target="#tambah-kredit">
               <i class="fas fa-plus"></i> Kredit Baru
             </a>            
           </div>
@@ -30,73 +31,7 @@
                   @currency($ttlKredit)
                 </p>
                 <p>
-                  @php 
-                  function terbilang($ttlKredit)
-        {
-        $ttlKredit = abs($ttlKredit);
-        $words = array(
-            0 => '',
-            1 => 'satu',
-            2 => 'dua',
-            3 => 'tiga',
-            4 => 'empat',
-            5 => 'lima',
-            6 => 'enam',
-            7 => 'tujuh',
-            8 => 'delapan',
-            9 => 'sembilan',
-            10 => 'sepuluh',
-            11 => 'sebelas',
-            12 => 'dua belas',
-            13 => 'tiga belas',
-            14 => 'empat belas',
-            15 => 'lima belas',
-            16 => 'enam belas',
-            17 => 'tujuh belas',
-            18 => 'delapan belas',
-            19 => 'sembilan belas',
-            20 => 'dua puluh',
-            30 => 'tiga puluh',
-            40 => 'empat puluh',
-            50 => 'lima puluh',
-            60 => 'enam puluh',
-            70 => 'tujuh puluh',
-            80 => 'delapan puluh',
-            90 => 'sembilan puluh'
-        );
-     
-        $result = '';
-     
-        if ($ttlKredit < 0) {
-            $result = 'minus ';
-            $ttlKredit = abs($ttlKredit);
-        }
-     
-        if ($ttlKredit < 21) {
-            $result .= $words[$ttlKredit];
-        } elseif ($ttlKredit < 100) {
-            $result .= $words[10 * floor($ttlKredit / 10)];
-            $remainder = $ttlKredit % 10;
-            if ($remainder) {
-                $result .= ' ' . $words[$remainder];
-            }
-        } elseif ($ttlKredit < 200) {
-            $result .= 'seratus ' . terbilang($ttlKredit - 100);
-        } elseif ($ttlKredit < 1000) {
-            $result .= terbilang(floor($ttlKredit / 100)) . ' ratus ' . terbilang($ttlKredit % 100);
-        } elseif ($ttlKredit < 2000) {
-            $result .= 'seribu ' . terbilang($ttlKredit - 1000);
-        } elseif ($ttlKredit < 1000000) {
-            $result .= terbilang(floor($ttlKredit / 1000)) . ' ribu ' . terbilang($ttlKredit % 1000);
-        } elseif ($ttlKredit < 1000000000) {
-            $result .= terbilang(floor($ttlKredit / 1000000)) . ' juta ' . terbilang($ttlKredit % 1000000);
-        } else {
-            $result .= 'Lebih dari 1 milyar';
-        }
-     
-        return $result;
-          }
-                  @endphp
+                  
                   {{ strtoupper(terbilang($ttlKredit))}} RUPIAH
                 </p>
               </div>
@@ -411,7 +346,7 @@
                       <button type="button"class="btn btn-primary" onclick="stepper.next()">Next</button>
                     </div>
                     <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger">
-                      <div class="form-group row">
+                    <div class="form-group row">
                           <label class="col-sm-4 col-form-label">Nominal Kredit <small>(Rupiah)</small><span class="text-danger">*</span></label>
                           <div class="col-sm-8">
                             <div class="form-group">
@@ -458,6 +393,9 @@
                       <button id="btnView" type="button"class="btn btn-primary" onclick="stepper.next()">Next</button>
                     </div>
                     <div id="konfirmasi-part" class="content active dstepper-block" role="tabpanel" aria-labelledby="konfirmasi-part-trigger">
+                    <div id="load" class="overlay d-none">
+                        <i class="fas fa-2x fa-spinner fa-spin"></i>
+                    </div> 
                     <div class="alert alert-default alert-dismissible" style="border: 2px solid orange">
                       <!-- <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button> -->
                       <h5><i class="icon fas fa-info"></i> Info!</h5>
@@ -473,7 +411,7 @@
                       </div>
                     </div>
                       <button type="button" class="btn btn-primary" onclick="stepper.previous()">Previous</button>
-                      <button id="btnSubmit"type="submit" class="btn btn-primary" disabled="true">Submit</button>
+                      <button id="btnSubmit" type="submit" class="btn btn-primary" onclick="loading()" disabled="true"> Submit</button>
                     </div>
                   </div>
                 </div>

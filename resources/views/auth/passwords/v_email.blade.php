@@ -23,14 +23,14 @@
   <!-- /.login-logo -->
   <div class="card">
 
-    <div class="card-header text-center" style="background: url('bg.jpg') bottom;center;opacity: 0.9;position: cover">
+    <div class="card-header text-center bg-navy" style="background: url('polkadot.png') right;opacity: 0.9;position: cover;background-size: 60%;100%;background-repeat: no-repeat">
         <img src="{{asset('template/logo1.png')}}" alt="" style="width: 100px"><br>
         <label style="font-size: 18px">KOPERASI KARYAWAN <br>
         MAKMUR ALAM SEJAHTERA</label>
         <p>Jalan Raya. Salatiga No.46 Butuh - Salatiga </p>
     </div>
     <div class="card-body login-card-body">
-      <p class="login-box-msg">Masukan alamat email Anda</p>
+      <p class="login-box-msg">Masukan email Anda</p>
       @if (session('status'))
       <div class="alert alert-success" role="alert">
           {{ session('status') }}
@@ -72,8 +72,8 @@
       </p> -->
     </div>
     <!-- /.login-card-body -->
-    <div class="card-footer" style="background: #d8f4fb">
-      <center><small><strong> Alamat Kantor:</strong><br>Jalan Raya Salatiga Solo KM. 8, Butuh, Tengaran, Pongge, Butuh, Kec. Tengaran, Kabupaten Semarang<br> Jawa Tengah 50775 </small></center>
+    <div class="card-footer" >
+    <center><small><strong> Alamat Kantor:</strong><br>Jalan Raya Salatiga - Solo Km. 08, Ds. Butuh, <br> Kec. Tengaran, Kab. Semarang <br> JAWA TENGAH 50775 </small></center>
     </div>
   </div>
 </div>

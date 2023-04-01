@@ -20,6 +20,7 @@
     <!-- /.content-header -->
     <section class="content">
       <div class="container-fluid">
+ 
         <div class="row">
           <div class="col-12">
 
@@ -38,6 +39,9 @@
             </div>
             @endif
           <div class="card">
+          <div id="load" class="overlay d-none">
+              <i class="fas fa-2x fa-spinner fa-spin"></i>
+          </div> 
               <div class="card-header bg-navy" style="background: url('{{asset('polkadot.png')}}') right;;opacity: 0.9;position: cover;background-size: 30%;60%;background-repeat: no-repeat">
               @foreach ($kredit as $data)
                 <h3 class="card-title">KODE TRANSAKSI </h3><br>
@@ -67,7 +71,9 @@
                   </div> -->
                   <!-- <hr style="height: 8px;background-image: linear-gradient(90deg, navy, orange);height: 5px"> -->
                   <!-- end info -->
+
                   <div class="row">
+
                     <div class="col-sm-6">
                       <div class="box p-2 m-1" >
                         <div class="form-group row">
@@ -157,34 +163,6 @@
                           <label class="col-sm-4 col-form-label">Tenor<span class="text-red">*</span></label>
                           <div class="col-sm-8">
                               <input id="tenor" name="tenor" type="number" class="form-control" max="5" value="{{$data->tenor}}" >
-
-                              <!-- <select id="tenor" name="tenor" class="form-control" style="width: 100%;" required>
-                                <option value="{{$data->tenor}}">{{$data->tenor}} (saat ini)</option>
-                                <option value="1">1 Bulan</option>
-                                <option value="2">2 Bulan</option>
-                                <option value="3">3 Bulan</option>
-                                <option value="4">4 Bulan</option>
-                                <option value="5">5 Bulan</option>
-                                <option value="6">6 Bulan</option>
-                                <option value="7">7 Bulan</option>
-                                <option value="8">8 Bulan</option>
-                                <option value="9">9 Bulan</option>
-                                <option value="10">10 Bulan</option>
-                                <option value="11">11 Bulan</option>
-                                <option value="12">12 Bulan</option>
-                                <option value="13">13 Bulan</option>
-                                <option value="14">14 Bulan</option>
-                                <option value="15">15 Bulan</option>
-                                <option value="16">16 Bulan</option>
-                                <option value="17">17 Bulan</option>
-                                <option value="18">18 Bulan</option>
-                                <option value="19">19 Bulan</option>
-                                <option value="20">20 Bulan</option>
-                                <option value="21">21 Bulan</option>
-                                <option value="22">22 Bulan</option>
-                                <option value="23">23 Bulan</option>
-                                <option value="24">24 Bulan</option>
-                              </select> -->
                           </div>
                         </div>
                         <div class="form-group row">
@@ -208,7 +186,7 @@
                         <div class="form-group row">
                           <label class="col-sm-4 col-form-label">Jatuh Tempo<span class="text-red">*</span></label>
                           <div class="col-sm-8">
-                            <input name="tempo" type="date" class="form-control" required>
+                            <input id="tempo" name="tempo" type="date" class="form-control" required>
                           </div>
                         </div>
                       </div>
@@ -219,7 +197,7 @@
                   <div class="form-group row">
                     <label class="col-sm-4 col-form-label">PERSETUJUAN <span class="text-red">*</span></label>
                     <div class="col-sm-8">
-                        <select name="app_ptgs" class="form-control" style="border: 1px solid red;width: 100%;" required>
+                        <select id="app_ptgs" name="app_ptgs" class="form-control" style="border: 1px solid red;width: 100%;" required>
                           <option value="">-Pilih-</option>
                           <option value="1">APPROVED</option>
                           <option value="0">NOT APPROVED</option>
@@ -230,7 +208,7 @@
                 <!-- /.card-body -->
                 <div class="card-footer">
                   <a href="/petugas-tunai/pengajuan-kredit-anggota" type="button" class="btn btn-default ">Back</a>
-                  <button type="submit" class="btn btn-info float-right">Submit</button>
+                  <button type="submit"  class="btn btn-info float-right" id="submitBtn" onclick="loading()" disabled>Submit</button>
                 </div>
                 <!-- /.card-footer -->
               </form>
@@ -239,4 +217,23 @@
         </div>
       </div>
     </section>
+    </script>
+<script type="text/javascript">
+  const input1 = document.getElementById('tempo');
+  const input2 = document.getElementById('app_ptgs');
+  const submitBtn = document.getElementById('submitBtn');
+
+  // fungsi untuk memeriksa apakah semua input telah diisi
+  function checkInputs() {
+    if (input1.value.trim() !== '' && input2.value.trim() !== '') {
+      submitBtn.disabled = false;
+    } else {
+      submitBtn.disabled = true;
+    }
+  }
+
+  // memeriksa input setiap kali pengguna mengetik
+  input1.addEventListener('change', checkInputs);
+  input2.addEventListener('change', checkInputs);
+</script>
 @endsection

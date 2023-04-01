@@ -6,13 +6,13 @@
       <div class="container">
         <div class="row mb-0">
           <div class="col-sm-6">
-            <h4> PENGAJUAN KREDIT</h4>
+            <!-- <h4> PENGAJUAN KREDIT</h4> -->
           </div><!-- /.col -->
           <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
+            <!-- <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="/">Home</a></li>
               <li class="breadcrumb-item active">Kredit Pinjaman</li>
-            </ol>
+            </ol> -->
           </div><!-- /.col -->
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
@@ -43,7 +43,7 @@
             @endif
             <div class="card">
                 <div class="card-header bg-navy" >
-                    <h3 class="card-title"><b style="font-size: 30px" class="mr-1">K</b>REDIT ANGGOTA </h3><br>
+                    <h3 class="card-title"><b style="font-size: 30px" class="mr-0">P</b>ENGAJUAN KREDIT </h3><br>
                     <hr class="mt-3 mb-0"style="border: 1px solid #fff">
                 </div>
               <!-- /.card-header -->

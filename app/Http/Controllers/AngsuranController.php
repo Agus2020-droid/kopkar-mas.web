@@ -12,6 +12,8 @@ use Notification;
 use App\Notifications\NotifikasiKredit;
 use App\Notifications\UserNotification;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\AngsuranImport;
 
 class AngsuranController extends Controller
 {
@@ -80,6 +82,7 @@ class AngsuranController extends Controller
             }else{
                 $angsuran = AngsuranModel::create([
                     'kredit_kd' => $kdKredit,
+                    'nik_ktp' => Request()->nik_ktp,
                     'user_id' => $idUser,
                     'nama' => $nm,
                     'tgl_angsuran' => $tglAngsuran,
@@ -98,8 +101,49 @@ class AngsuranController extends Controller
             return redirect()->back()->with('gagal','Transaksi gagal di simpan')
             ->with('error','Gagal');
         }
+    }
+
+    public function importAngsuran(Request $request)
+    {
+        try {
+            $file = $request->file('file');
+            $namaFile = date(date('d-m-Y')).$file->getClientOriginalName();
+    
+            Excel::import(new AngsuranImport, $file->store('FileImport'));
+            $file->move('storage/FileImport', $namaFile);
+            // dd($namaFile);
+            return redirect()->back()->with('sukses', 'Data berhasil diupload')->with('success','Berhasil');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('gagal', 'Gagal upload data')->with('error','Gagal');
+        }
+    }
+
+    public function updateAngsuran(Request $request)
+    {
+        $angsuranId = Request()->angsuran_id;
+        try {
+            $request->validate([
+                'tgl_angsuran' => 'required',
+                'jml_angsuran' => 'required',
+                'metode' => 'required',
+            ],[
+                'tgl_angsuran.required' => 'Tanggal tidak boleh kosong',
+                'jml_angsuran.required' => 'Angsuran tidak boleh kosong',
+                'metode.required' => 'Jenis transaksi tidak boleh kosong',
+            ]);
+
+            $angsuran = AngsuranModel::where('id_angsuran', $angsuranId)
+            ->update([
+                'tgl_angsuran' => Request()->tgl_angsuran,
+                'jml_angsuran' => Request()->jml_angsuran,
+                'metode' => Request()->metode,
+            ]);
+            // dd($request);
+            return redirect()->back()->with('sukses', 'Data berhasil diupdate')->with('success','Berhasil');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('gagal', 'Gagal update data')->with('error','Gagal');
+        }
 
         
-
     }
 }

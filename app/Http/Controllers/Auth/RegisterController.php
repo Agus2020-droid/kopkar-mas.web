@@ -54,9 +54,9 @@ class RegisterController extends Controller
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'nik_ktp' => ['required','max:16','unique:users'],
+            'nik_kry' => ['required','max:6','unique:users'],
             'telp' => ['required','max:13','unique:users'],
-       
-
+            'alamat' => ['required','string', 'max:255'],
         ]);
     }
 
@@ -72,7 +72,9 @@ class RegisterController extends Controller
             'name' => $data['name'],
             'email' => $data['email'],
             'nik_ktp' => $data['nik_ktp'],
+            'nik_kry' => $data['nik_kry'],
             'telp' => $data['telp'],
+            'alamat' => $data['alamat'],
             'password' => Hash::make($data['password']),
         ]);
     }

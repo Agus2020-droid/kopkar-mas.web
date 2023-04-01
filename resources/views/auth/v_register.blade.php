@@ -23,7 +23,7 @@
   <!-- /.login-logo -->
   <div class="card">
 
-    <div class="card-header text-center" style="background: url('bg.jpg') top;center;opacity: 1;position: cover;">
+    <div class="card-header text-center bg-navy" style="background: url('polkadot.png') right;opacity: 0.9;position: cover;background-size: 60%;100%;background-repeat: no-repeat">
         <img src="{{asset('template/logo1.png')}}" alt="" style="width: 100px"><br>
         <label style="font-size: 18px">KOPERASI KARYAWAN <br>
         MAKMUR ALAM SEJAHTERA</label>
@@ -56,13 +56,26 @@
             @enderror
         </div>
         <div class="input-group mb-3">
-          <input type="text" name="nik_ktp" onkeypress="return event.charCode >= 48 && event.charCode <=57" class="form-control @error('nik_ktp') is-invalid @enderror" placeholder="NIK KTP" maxLength="16" value="{{ old('nik_ktp') }}" required>
+          <input type="text" name="nik_ktp" onkeypress="return event.charCode >= 48 && event.charCode <=57" class="form-control @error('nik_ktp') is-invalid @enderror" placeholder="No. KTP" maxLength="16" value="{{ old('nik_ktp') }}" required>
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-credit-card"></span>
             </div>
           </div>
           @error('nik_ktp')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+        </div>
+        <div class="input-group mb-3">
+          <input type="text" name="nik_kry" onkeypress="return event.charCode >= 48 && event.charCode <=57" class="form-control @error('nik_ktp') is-invalid @enderror" placeholder="NIK Karyawan" maxLength="6" value="{{ old('nik_kry') }}" required>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-credit-card"></span>
+            </div>
+          </div>
+          @error('nik_kry')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>
@@ -82,13 +95,26 @@
             @enderror
         </div>
         <div class="input-group mb-3">
-          <input id="email" type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="Alamat Email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+          <input id="email" type="email" name="email" class="form-control @error('email') is-invalid @enderror" placeholder="Email" value="{{ old('email') }}" required autocomplete="email" autofocus>
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
             </div>
           </div>
           @error('email')
+                <span class="invalid-feedback" role="alert">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+        </div>
+        <div class="input-group mb-3">
+          <textarea name="alamat" cols="30" rows="3" placeholder="Alamat sesuai KTP"class="form-control @error('alamat') is-invalid @enderror" required></textarea>
+          <div class="input-group-append">
+            <div class="input-group-text">
+              <span class="fas fa-home"></span>
+            </div>
+          </div>
+          @error('alamat')
                 <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
                 </span>

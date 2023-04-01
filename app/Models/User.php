@@ -8,23 +8,32 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\SoftDeletes;
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
+    protected $dates = ['deleted_at'];
     protected $fillable = [
         'name',
         'email',
         'password',
         'nik_ktp',
+        'nik_kry',
         'telp',
+        'alamat',
         'level',
         'status_user',
+        'foto',
+        'mode',
+        'last_login_at',
+        'last_login_ip',
+        'deleted_at',
     ];
 
     /**

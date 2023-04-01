@@ -82,8 +82,9 @@
                                     </code></small>
                                 </td>
                                 <td>
-                                    <a href="/petugas-motor/detail-kredit-anggota/{{$data->id_kredit}}" class="btn btn-primary btn-sm btn-block" style="border-radius: 5px">Detail</a>
-                                </td>
+                                    <a href="/petugas-motor/detail-kredit-anggota/{{$data->id_kredit}}" class="btn btn-primary btn-sm btn-block"> <i class="fas fa-eye"></i> Lihat</a>
+                                    <a href="/petugas-motor/cetak-akad/{{$data->id_kredit}}" class="btn btn-default btn-sm btn-block" target="_blank"><i class="fas fa-print"></i> Cetak</a>
+                                  </td>
                             </tr>
                             @endforeach
                         </tbody>

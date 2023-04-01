@@ -32,7 +32,7 @@
                 </div>
                 
                 <div class="widget-user-image">
-                  <img class="img-circle elevation-2" src="{{asset('template/')}}/dist/img/user7-128x128.jpg" alt="User Avatar">
+                  <img class="img-circle elevation-2" src="{{url('storage/foto_user/user1.png')}}" alt="User Avatar">
 
                 </div>
 

@@ -18,8 +18,27 @@
       <div class="container">
         <div class="row">
           <div class="col-12">
+          @if (session('sukses'))
+            <div class="alert alert-success" role="alert">
+            {{session('sukses')}}
+            </div>
+            @endif
+            @if (session('gagal'))
+            <div class="alert alert-danger" role="alert">
+            {{session('gagal')}}
+            </div>
+            @endif
+            @if (count($errors) > 0)
+            <div class="alert alert-danger" role="alert">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
           <div class="invoice p-3 mb-3">
-
+          
               <!-- info row -->
            <div class="row">
             <div class="col-md-12">
@@ -32,7 +51,7 @@
                 </div>
                 
                 <div class="widget-user-image">
-                  <img class="img-circle elevation-2" src="{{asset('template/')}}/dist/img/user7-128x128.jpg" alt="User Avatar">
+                  <img class="img-circle elevation-2" src="{{url('storage/foto_user/user1.png')}}" alt="User Avatar">
 
                 </div>
 
@@ -117,7 +136,7 @@
                       </div>
                     </div>
                     <div class="form-group row">
-                    <label class="col-sm-3 control-label"> ANGSURAN</label> 
+                    <label class="col-sm-3 control-label"> ANGSURAN PER BULAN</label> 
                       <div class="col-sm-9">
                         <input type="text" class="form-control"value="@currency($data->angsuran)" readonly>
                       </div>
@@ -139,9 +158,13 @@
                       <tr colspan=""><strong>TABEL ANGSURAN</strong></tr>
                     <tr>
                       <th width="8%">No</th>
-                      <th>Tanggal</th>
-                      <th>Nilai Angsuran</th>
-                      <th>Metode</th>
+                      <th width="20%">Tanggal</th>
+                      <th width="20%">Kode Angsuran</th>
+                      <th class="text-right" width="20%">Angsuran</th>
+                      <th class="text-center">Jenis Transaksi</th>
+                      @if(auth()->user()->level == 3)
+                      <th>Action</th>
+                      @endif
                     </tr>
                     </thead>
                     <tbody>
@@ -151,18 +174,21 @@
                       @foreach ($angsuran as $item)
                     <tr>
                       <td>{{$no++}}</td>
-                      <td>{{Carbon\Carbon::parse($data->tgl_angsuran)->isoFormat("D MMMM Y")}}</td>
-                      <td>@currency($item->jml_angsuran)</td>
+                      <td>{{Carbon\Carbon::parse($item->tgl_angsuran)->isoFormat("D-MMM-YY")}}</td>
+                      <td>ANG-{{$item->id_angsuran}}</td>
+                      <td class="text-right">@currency($item->jml_angsuran)</td>
                       @if($item->metode == 1)
-                      <td>TUNAI</td>
+                      <td class="text-center">TUNAI</td>
                       @elseif($item->metode == 2)
-                      <td>TRANSFER</td>
+                      <td class="text-center">TRANSFER</td>
                       @elseif($item->metode == 3)
-                      <td>POTONG GAJI</td>
+                      <td class="text-center">POTONG GAJI</td>
+                      @endif
+                      @if(auth()->user()->level == 3)
+                      <td><button class="btn btn-outline-primary" data-toggle="modal" data-target="#modal-edit-angsuran{{$item->id_angsuran}}">Edit</button></td>
                       @endif
                     </tr>
                     @endforeach
-                   
                     </tbody>
                   </table>
                 </div>
@@ -183,24 +209,12 @@
                       <span class="badge bg-green"> SUDAH LUNAS</span>
                       @endif
                     </div>  
-                    <!-- <div class="knob-label text-green"><b> LUNAS</b></div>   -->
                   </div>
                 </div>
               </div>
-              <!-- /.row -->
-
               <div class="row ">
-                <!-- accepted payments column -->
-                <!-- <div class="col-sm-4">
-                  <div class="text-center pt-4">
-                    <input type="text" class="knob" value="30" data-width="120" data-height="120" data-fgColor="red" data-readonly="true" >
-                    <div class="knob-label text-red"><b> BELUM LUNAS</b></div>  
-                  </div>
-                </div> -->
-               
                 <div class="col-sm-8">
                   <p class="lead"></p>
-
                   <div class="table-responsive">
                     <table class="table">
                       <tbody><tr>
@@ -209,9 +223,7 @@
                       </tr>
                       <tr>
                         <th>TOTAL ANGSURAN</th>
-                        
                         <td>@currency($item->ttl_angsuran)</td>
-                       
                       </tr>
                       <tr class="text-red">
                         <th>SISA ANGSURAN</th>
@@ -224,18 +236,75 @@
                 <!-- /.col -->
               </div>
               <!-- /.row -->
-
-              <!-- this row will not appear when printing -->
-     
             </div>
           </div>
         </div>
-        <!-- /.row -->
-      </div><!-- /.container-fluid -->
+      </div>
     </div>
-    <!-- /.content -->
     @endforeach
-
-<!-- ./wrapper -->
-<!-- Page specific script -->
+    @foreach ($angsuran as $item)
+    <div class="modal fade show" id="modal-edit-angsuran{{$item->id_angsuran}}" style="display: none;" aria-modal="true" role="dialog">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+          <div id="load" class="overlay d-none">
+              <i class="fas fa-4x fa-spinner fa-spin"></i><br>
+              <h4 style="pl-4">Upload on progress .....</h4>
+          </div> 
+            <div class="modal-header bg-navy">
+              <h5 class="text-center">Edit Angsuran No. {{$item->id_angsuran}}</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div class="modal-body">
+            <form action="{{route('update.angsuran')}}" method="post" enctype="multipart/form-data">
+              @csrf
+              <input type="hidden" name="angsuran_id" value="{{$item->id_angsuran}}">
+              <div class="form-group row">
+              <label class="col-sm-3 col-form-label">Kode Kredit</label>
+              <div class="col-sm-9">
+                  <input type="text" class="form-control" value="{{$item->kredit_kd}}" readonly>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-3 col-form-label">Kreditur</label>
+              <div class="col-sm-9">
+                  <input type="text" class="form-control" value="{{$item->nama}}" readonly>
+              </div>
+            </div>
+              <div class="form-group row">
+              <label class="col-sm-3 col-form-label">Tanggal</label>
+              <div class="col-sm-9">
+                  <input name="tgl_angsuran" type="date" class="form-control" value="{{$item->tgl_angsuran}}" required>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-3 col-form-label">Angsuran</label>
+              <div class="col-sm-9">
+                  <input name="jml_angsuran" type="text" class="form-control" value="{{$item->jml_angsuran}}" required>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-3 col-form-label">Jenis Transaksi</label>
+              <div class="col-sm-9">
+                <select name="metode" class="form-control">
+                  <option value="{{$item->metode}}">@if($item->metode == 1) TUNAI @elseif($item->metode == 2) TRANSFER @elseif ($item->metode == 3) POTONG GAJI @endif</option>
+                  <option value="1" class="{{$item->metode == 1? 'd-none': ''}}">TUNAI/CASH</option>
+                  <option value="2" class="{{$item->metode == 2? 'd-none': ''}}">TRANSFER</option>
+                  <option value="3" class="{{$item->metode == 3? 'd-none': ''}}">POTONG GAJI</option>
+                </select>
+              </div>
+            </div>
+            </div>
+            <div class="modal-footer justify-content-between">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Batal</button>
+              <button type="submit" class="btn btn-primary">Update</button>
+            </div>
+            </form>
+          </div>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
+    @endforeach
   @endsection

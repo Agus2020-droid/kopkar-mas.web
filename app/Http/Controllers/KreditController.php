@@ -206,11 +206,10 @@ class KreditController extends Controller
     public function detailKreditSaya($id_kredit)
     {
         $kredit = KreditModel::where('id_kredit',$id_kredit)
-
         ->get();
+
         foreach($kredit as $data)
         $kode = $data->kd_kredit;
-        
 
         $angsuran = AngsuranModel::where('kredit_kd', $kode)->get();
         $ttlKredit = KreditModel::where('id_kredit',$id_kredit)->value('total');
@@ -219,7 +218,7 @@ class KreditController extends Controller
         ->get();
         $val =  KreditModel::where('id_kredit',$id_kredit)
         ->value('app_ket');
-        // dd($val);
+        // dd($angsuran);
         if($val == 1){
         return view('v_detailKreditSaya', compact('kredit','angsuran','ttlAngsuran','ttlKredit'));
         }else{
@@ -243,7 +242,7 @@ class KreditController extends Controller
         $replacement = '';
         $nominal = preg_replace($pattern, $replacement, $plafons);
         $tenor = Request()->tenor;
-
+        $idUser = Request()->user_id;
         
 
         if($j == 'BARANG' && $tenor <= 6)
@@ -271,11 +270,6 @@ class KreditController extends Controller
                     'jml_brng' => 'required',
                     'spek' => 'required',
                     'beli_oleh' => 'required',
-                ],[
-                    'nm_brg.required'=>'Nama barang kosong',
-                    'jml_brng.required'=>'Jumlah barang kosong',
-                    'spek.required'=>'Spesifikasi kosong',
-                    'beli_oleh.required'=>'Pembelian belum ditentukan',
                 ]);
                 
 
@@ -313,19 +307,19 @@ class KreditController extends Controller
             {
                 $user = User::whereIn('level',[3,4,5])->get();
                 $notifikasi = [
-                    'notif'=>'Notifikasi Pengajuan Kredit Barang',
+                    'notif'=>'Pengajuan Kredit Barang',
                 ];
             }else if($j == 'KENDARAAN')
             {
                 $user = User::whereIn('level',[3,4,6])->get();
                 $notifikasi = [
-                    'notif'=>'Notifikasi Pengajuan Kredit Kendaraan',
+                    'notif'=>'Pengajuan Kredit Kendaraan',
                 ];
             }else if($j == 'TUNAI')
             {
                 $user = User::whereIn('level',[3,4,7])->get();
                 $notifikasi = [
-                    'notif'=>'Notifikasi Pengajuan Kredit Tunai',
+                    'notif'=>'Pengajuan Kredit Tunai',
                 ];
             }
 
@@ -339,7 +333,7 @@ class KreditController extends Controller
             $kredit = KreditModel::create([
                 'kd_kredit' => $kode_barang,
                 'tgl_kredit' => now(),
-                'user_id' => Request()->user_id,
+                'user_id' => $idUser,
                 'nama' => Request()->nama,
                 'nik_ktp' => Request()->nik_ktp,
                 'jns_krdt' => $j,
@@ -357,6 +351,8 @@ class KreditController extends Controller
                 'bunga' => $bunga,
                 'angsuran' => $angsuran,
             ]);
+
+            $statusUser = User::where('id', $idUser)->update(['status_user' => '0']);
             
             Notification::send($user, new UserNotification($notifikasi));
             Notification::send($userEmail, new NotifikasiKredit($data));
@@ -369,145 +365,6 @@ class KreditController extends Controller
         // dd($angsuran);
     }
 
-    public function simpanKreditByPetugas(Request $request)
-    {
-
-        $userId = Request()->user_id;
-        $nama = User::where('id', $userId)->value('name');
-        $nikKtp = User::where('id', $userId)->value('nik_ktp');
-
-        $userEmail = User::where('id', auth()->user()->id)->get();
-
-        $j = Request()->jns_krdt;
-        $nm = auth()->user()->name;
-        $plafons = Request()->plafon;
-        $pattern = '/[^\w\s]/u';
-        $replacement = '';
-        $nominal = preg_replace($pattern, $replacement, $plafons);
-        $tenor = Request()->tenor;
-
-        
-
-        if($j == 'BARANG' && $tenor <= 6)
-        {
-            $bunga = 0.1/$tenor;
-        }else if($j == 'BARANG' && $tenor > 6)
-        {
-            $bunga = 0.01;
-        }else if($j == 'KENDARAAN')
-        {
-            $bunga = 0.01;
-        }else if($j == 'TUNAI')
-        {
-            $bunga = 0;
-        }
-        
-        $total = round(($nominal*$bunga)+$nominal);
-        $angsuran = round($total/$tenor);
-
-        try {
-            if($j == 'BARANG')
-            {
-                $validasi = $request->validate([
-                    'nm_brg' => 'required',
-                    'jml_brng' => 'required',
-                    'spek' => 'required',
-                    'beli_oleh' => 'required',
-                ],[
-                    'nm_brg.required'=>'Nama barang kosong',
-                    'jml_brng.required'=>'Jumlah barang kosong',
-                    'spek.required'=>'Spesifikasi kosong',
-                    'beli_oleh.required'=>'Pembelian belum ditentukan',
-                ]);
-                
-
-            }else if($j == 'KENDARAAN')
-            {
-                $validasi = $request->validate([
-                    'nm_kendaraan' => 'required',
-                    'kondisi' => 'required',
-                    'jml_unit' => 'required',
-                    'spek' => 'required',
-                    'beli_oleh' => 'required',
-                ]);
-                
-            }else if($j == 'TUNAI')
-            {
-                $validasi = $request->validate([
-                    'keperluan' => 'required',
-                ]);
-               
-            }
-            
-            $data = [
-                'title'=>'Notifikasi Pengajuan Kredit',
-                'to'=>'Kepada Yth. Sdr/i'.' '.$nm.' '.'',
-                'body'=>'',
-                'body1'=>'Salam Sejahtera,',
-                'body2'=>'Pengajuan Kredit'.' '.$j.' '.'Anda pada '.''.Carbon::parse(now())->isoFormat('dddd, DD MMMM Y HH:mm').'',
-                'isi'=>'Telah berhasil dibuat. Mohon menunggu konfirmasi dari petugas KOPERASI KARYAWAN MAKMUR ALAM SEJAHTERA',
-                'body3'=>'',
-            ];
-
-            if($j == 'BARANG')
-            {
-                $user = User::where('id', $userId)->orWhereIn('level',[3,4,5])->get();
-                $notifikasi = [
-                    'notif'=>'Pengajuan Kredit Barang '.$nama.'',
-                ];
-            }else if($j == 'KENDARAAN')
-            {
-                $user = User::where('id', $userId)->orWhereIn('level',[3,4,6])->get();
-                $notifikasi = [
-                    'notif'=>'Pengajuan Kredit Kendaraan '.$nama.'',
-                ];
-            }else if($j == 'TUNAI')
-            {
-                $user = User::where('id', $userId)->orWhereIn('level',[3,4,7])->get();
-                $notifikasi = [
-                    'notif'=>'Pengajuan Kredit Tunai '.$nama.'',
-                ];
-            }
-
-
-            $huruf = 'KR';
-            $id = KreditModel::orderBy('id_kredit', 'desc')->value('id_kredit');
-            $nextId = $id+1;
-            $kode_barang = $huruf . sprintf('%03d', $nextId);
-            // dd($nikKtp,$nama);
-
-            $kredit = KreditModel::create([
-                'kd_kredit' => $kode_barang,
-                'tgl_kredit' => now(),
-                'user_id' => $userId,
-                'nama' => $nama,
-                'nik_ktp' => $nikKtp,
-                'jns_krdt' => $j,
-                'nm_brg' => Request()->nm_brg,
-                'jml_brng' => Request()->jml_brng,
-                'nm_kendaraan' => Request()->nm_kendaraan,
-                'kondisi' => Request()->kondisi,
-                'jml_unit' => Request()->jml_unit,
-                'spek' => Request()->spek,
-                'beli_oleh' => Request()->beli_oleh,
-                'keperluan' => Request()->keperluan,
-                'nominal' => $nominal,
-                'total' => $total,
-                'tenor' => $tenor,
-                'bunga' => $bunga,
-                'angsuran' => $angsuran,
-            ]);
-            
-            Notification::send($user, new UserNotification($notifikasi));
-            Notification::send($userEmail, new NotifikasiKredit($data));
-            return redirect()->back()->with('sukses','Pengajuan berhasil dibuat, Mohon tunggu verifikasi dari petugas koperasi.')
-            ->with('success','Berhasil');
-        } catch (\Throwable $th) {
-            return redirect()->back()->with('gagal','GAGAL. Silahkan coba lagi ')
-            ->with('error','Gagal');
-        }
-        // dd($angsuran);
-    }
 
     public function approval($id_kredit)
     {
@@ -553,7 +410,7 @@ class KreditController extends Controller
             if($app == '1')
             {
                 $notifikasi = [
-                    'notif'=>'Pengajuan Kredit Anda disetujui',
+                    'notif'=>'Pengajuan Kredit '.' '.$nm.' '.' disetujui',
                 ];
                 $data = [
                     'title'=>'Re : Notifikasi Pengajuan Kredit',
@@ -567,7 +424,7 @@ class KreditController extends Controller
             }else if ($app == '2')
             {
                 $notifikasi = [
-                    'notif'=>'Pengajuan Kredit Anda ditolak',
+                    'notif'=>'Pengajuan Kredit '.' '.$nm.' '.' di tolak',
                 ];
                 $data = [
                     'title'=>'Re : Notifikasi Pengajuan Kredit',
@@ -636,7 +493,7 @@ class KreditController extends Controller
             if($app == '1')
             {
                 $notifikasi = [
-                    'notif'=>'Pengajuan Kredit Anda disetujui',
+                    'notif'=>'Pengajuan Kredit '.' '.$nm.' '.' disetujui',
                 ];
                 $data = [
                     'title'=>'Re : Notifikasi Pengajuan Kredit',
@@ -650,7 +507,7 @@ class KreditController extends Controller
             }else if ($app == '2')
             {
                 $notifikasi = [
-                    'notif'=>'Pengajuan Kredit Anda ditolak',
+                    'notif'=>'Pengajuan Kredit '.' '.$nm.' '.' di tolak',
                 ];
                 $data = [
                     'title'=>'Re : Notifikasi Pengajuan Kredit',
@@ -716,7 +573,7 @@ class KreditController extends Controller
             if($app == '1')
             {
                 $notifikasi = [
-                    'notif'=>'Pengajuan Kredit Anda disetujui',
+                    'notif'=>'Pengajuan Kredit '.' '.$nm.' '.' disetujui',
                 ];
                 $data = [
                     'title'=>'Re : Notifikasi Pengajuan Kredit',
@@ -730,7 +587,7 @@ class KreditController extends Controller
             }else if ($app == '2')
             {
                 $notifikasi = [
-                    'notif'=>'Pengajuan Kredit Anda ditolak',
+                    'notif'=>'Pengajuan Kredit '.' '.$nm.' '.' di tolak',
                 ];
                 $data = [
                     'title'=>'Re : Notifikasi Pengajuan Kredit',
@@ -826,5 +683,36 @@ class KreditController extends Controller
 
         }
 
+    }
+
+    public function cetakAkadBarang($id_kredit)
+    {
+        $kredit = KreditModel::where('id_kredit', $id_kredit)
+        ->leftJoin('users','tb_kredit.nik_ktp','=','users.nik_ktp')
+        ->get();
+        $ketua = User::where('level',4)
+        ->get();
+        $bendahara = User::where('level',3)
+        ->value('name');
+        return view('v_cetakAkadBarang', compact('kredit','ketua','bendahara'));
+    }
+
+    public function cetakAkadMotor($id_kredit)
+    {
+        $kredit = KreditModel::where('id_kredit', $id_kredit)
+        ->leftJoin('users','tb_kredit.nik_ktp','=','users.nik_ktp')
+        ->get();
+
+        $ketua = User::where('level',4)
+        ->get();
+        $bendahara = User::where('level',3)
+        ->value('name');
+        // dd($kredit);
+        return view('v_cetakAkadMotor', compact('kredit','ketua','bendahara'));
+    }
+
+    public function aksesUser()
+    {
+        return view ('ketua.v_aksesUser');
     }
 }

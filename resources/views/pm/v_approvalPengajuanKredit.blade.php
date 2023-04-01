@@ -38,6 +38,9 @@
             </div>
             @endif
           <div class="card">
+          <div id="load" class="overlay d-none">
+              <i class="fas fa-2x fa-spinner fa-spin"></i>
+          </div> 
               <div class="card-header bg-navy" style="background: url('{{asset('polkadot.png')}}') right;;opacity: 0.9;position: cover;background-size: 30%;60%;background-repeat: no-repeat">
               @foreach ($kredit as $data)
                 <h3 class="card-title">KODE TRANSAKSI </h3><br>
@@ -180,7 +183,7 @@
                         <div class="form-group row">
                           <label class="col-sm-4 col-form-label">Jatuh Tempo<span class="text-red">*</span></label>
                           <div class="col-sm-8">
-                            <input name="tempo" type="date" class="form-control" required>
+                            <input id="tempo" name="tempo" type="date" class="form-control" required>
                           </div>
                         </div>
                       </div>
@@ -191,7 +194,7 @@
                   <div class="form-group row">
                     <label class="col-sm-4 col-form-label">PERSETUJUAN <span class="text-red">*</span></label>
                     <div class="col-sm-8">
-                        <select name="app_ptgs" class="form-control" style="border: 1px solid red;width: 100%;" required>
+                        <select id="app_ptgs" name="app_ptgs" class="form-control" style="border: 1px solid red;width: 100%;" required>
                           <option value="">-Pilih-</option>
                           <option value="1">APPROVED</option>
                           <option value="0">NOT APPROVED</option>
@@ -202,7 +205,7 @@
                 <!-- /.card-body -->
                 <div class="card-footer">
                   <a href="/petugas-motor/pengajuan-kredit-anggota" type="button" class="btn btn-default ">Back</a>
-                  <button type="submit" class="btn btn-info float-right">Submit</button>
+                  <button type="submit" class="btn btn-info float-right" id="submitBtn" onclick="loading()" disabled>Submit</button>
                 </div>
                 <!-- /.card-footer -->
               </form>
@@ -211,4 +214,22 @@
         </div>
       </div>
     </section>
+    <script type="text/javascript">
+  const input1 = document.getElementById('tempo');
+  const input2 = document.getElementById('app_ptgs');
+  const submitBtn = document.getElementById('submitBtn');
+
+  // fungsi untuk memeriksa apakah semua input telah diisi
+  function checkInputs() {
+    if (input1.value.trim() !== '' && input2.value.trim() !== '') {
+      submitBtn.disabled = false;
+    } else {
+      submitBtn.disabled = true;
+    }
+  }
+
+  // memeriksa input setiap kali pengguna mengetik
+  input1.addEventListener('change', checkInputs);
+  input2.addEventListener('change', checkInputs);
+</script>
 @endsection

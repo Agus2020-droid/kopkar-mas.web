@@ -83,6 +83,7 @@
                                 </td>
                                 <td>
                                     <a href="/petugas-barang/detail-kredit-anggota/{{$data->id_kredit}}" class="btn btn-primary btn-sm btn-block" style="border-radius: 5px">Detail</a>
+                                    <a href="/petugas-barang/cetak-akad/{{$data->id_kredit}}" class="btn btn-default btn-sm btn-block" target="_blank"><i class="fas fa-print"></i> Cetak</a>
                                 </td>
                             </tr>
                             @endforeach

@@ -14,6 +14,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="{{asset('template/')}}/plugins/fontawesome-free/css/all.min.css">
+  <!-- daterange picker -->
+  <link rel="stylesheet" href="{{asset('template/')}}/plugins/daterangepicker/daterangepicker.css">
+  <!-- iCheck for checkboxes and radio inputs -->
+  <link rel="stylesheet" href="{{asset('template/')}}/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+  <!-- Tempusdominus Bootstrap 4 -->
+  <link rel="stylesheet" href="{{asset('template/')}}/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="{{asset('template/')}}/dist/css/adminlte.min.css">
   <!-- DataTables -->
@@ -30,27 +36,38 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="{{asset('template/')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
   <!-- Toastr -->
   <link rel="stylesheet" href="{{asset('template/')}}/plugins/toastr/toastr.min.css">
+  
 </head>
 @guest
-<body class="hold-transition layout-top-nav">
-<nav class="main-header navbar navbar-expand-md navbar-light navbar-dark">
+<body class="hold-transition  layout-top-nav">
+  
+<nav class="main-header navbar navbar-expand-md navbar-light ">
     <div class="container">
       <a href="#" class="navbar-brand">
         <img src="url('logo1.jpg')" alt="AdminLTE Logo" class="brand-image img-circle elevation-0" style="opacity: .8; height: 30px">
         <span class="brand-text font-weight-light">Kopkar <strong> MAS</strong></span>
       </a>
 @else
-<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
+<body id="Mybody"  <?php if(auth()->user()->mode == 'on') echo 'class="hold-transition sidebar-mini layout-fixed dark-mode layout-navbar-fixed"'; else echo 'class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed"';?>>
 
 <div class="wrapper">
 
   <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand bg-navy bg-light navbar-light bg-white">
+  <nav id="Mynav"  <?php if(auth()->user()->mode == 'on') echo 'class="main-header navbar navbar-expand bg-navy bg-light navbar-dark bg-dark"'; else echo 'class="main-header navbar navbar-expand bg-navy bg-light navbar-light bg-white"';?>>
     <!-- Left navbar links -->
     <ul class="navbar-nav">
    
       <li class="nav-item">
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+      <li class="nav-item">
+      <div class="custom-switch pt-2">
+      <form id="mode-form" action="{{ route('update.mode') }}" method="POST">
+          @csrf
+            <input name="mode" type="checkbox" class="custom-control-input" id="customSwitch1" <?php if(auth()->user()->mode == 'on') echo 'checked'; else echo '';?>>
+            <label class="custom-control-label" for="customSwitch1">Mode Gelap</label>
+      </form>
+              </div>
       </li>
       @endguest
       
@@ -73,10 +90,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
       @endif
   @else
       <!-- Navbar Search -->
+
       <li class="nav-item">
         <a class="nav-link" data-widget="navbar-search" href="#" role="button">
           <i class="fas fa-search"></i>
         </a>
+
         <div class="navbar-search-block">
           <form class="form-inline">
             <div class="input-group input-group-sm">
@@ -103,12 +122,12 @@ scratch. This page gets rid of all links and provides the needed markup only.
           @else
             @endif
         </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right table-responsive" style="max-height: 500px">
           <span class="dropdown-item dropdown-header">{{count(auth()->user()->unreadNotifications)}} Notifications</span>
           @foreach(auth()->user()->unreadNotifications as $notification)
           <div class="dropdown-divider"></div>
           <a href="{{route('markasread', $notification->id)}}" class="dropdown-item">
-            <i class="fas fa-circle text-sm text-blue mr-2"></i> {{strip_tags($notification->data['user']['name'])}} <span class="float-right text-muted text-sm" style="font-size: 12px">{{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}</span><br> <span style="font-size: 14px">{{strip_tags($notification->data['request']['notif'])}}</span>
+            <i class="fas fa-circle text-sm text-blue mr-2"></i> {{strip_tags($notification->data['user']['name'])}} <span class="float-right text-muted text-sm" style="font-size: 5px">{{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}</span><br> <span style="font-size: 14px">{{strip_tags($notification->data['request']['notif'])}}</span>
             
             <!-- <small class="float-right badge bg-blue text-sm">New</small> -->
           </a>
@@ -129,15 +148,39 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- /.navbar -->
   @guest
   <div class="content-wrapper">
+
   @yield('content')
     </div>
     @else
+    <div class="modal fade show" id="modal-mode" style="display: none; padding-right: 17px;" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content bg-default">
+        <div class="modal-header bg-navy">
+          <label class="modal-title">Mode Tampilan</label>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Ganti mode {{auth()->user()->mode == 'on'? 'terang':'gelap'}} ? </p>
+        </div>
+        <div class="modal-footer justify-content-between">
+          <button id="btn-cancel" type="button" class="btn btn-outline-light" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-primary" href="{{ route('update.mode') }}"
+              onclick="event.preventDefault();document.getElementById('mode-form').submit();">OK</a>
+        
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div> 
   <div class="modal fade show" id="modal-logout" style="display: none; padding-right: 17px;" aria-modal="true" role="dialog">
         <div class="modal-dialog modal-sm">
           <div class="modal-content bg-default">
           <div class="modal-header bg-navy">
           <!-- <h4 class="modal-title"></h4> -->
-          <img src="{{asset('logo1.png')}}" alt="AdminLTE Logo" class="brand-image img-circle elevation-0" style="opacity: .8; height: 50px">
+          <img src="{{url('storage/foto_user/'.auth()->user()->foto)}}" alt="AdminLTE Logo" class="brand-image img-circle elevation-0" style="width: 50px;height: 50px;object-fit: cover;object-position: 100% 0;">
           <span class="brand-text font-weight-light pl-2"><strong>{{auth()->user()->name}}</strong><br><small class="text-mute">{{auth()->user()->email}}</small></span>
           
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -211,8 +254,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="{{asset('template/')}}/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
 <!-- Bootstrap Switch -->
 <script src="{{asset('template/')}}/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
-<!-- Select2 -->
-<!-- <script src="{{asset('template/')}}/plugins/select2/js/select2.full.min.js"></script> -->
 <!-- BS-Stepper -->
 <script src="{{asset('template/')}}/plugins/bs-stepper/js/bs-stepper.min.js"></script>
 <!-- dropzonejs -->
@@ -240,7 +281,10 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="{{asset('template/')}}/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
 <script src="{{asset('template/')}}/plugins/datatables-buttons/js/buttons.print.min.js"></script>
 <script src="{{asset('template/')}}/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
-
+<!-- Validation -->
+<!-- jquery-validation -->
+<script src="{{asset('template/')}}/plugins/jquery-validation/jquery.validate.min.js"></script>
+<script src="{{asset('template/')}}/plugins/jquery-validation/additional-methods.min.js"></script>
 <script>
   $(function () {
     $("#example1").DataTable({
@@ -250,7 +294,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     $('#example2').DataTable({
       "paging": true,
       "lengthChange": false,
-      "searching": false,
+      "searching": true,
       "ordering": true,
       "info": true,
       "autoWidth": false,
@@ -274,7 +318,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     $('#datemask2').inputmask('mm/dd/yyyy', { 'placeholder': 'mm/dd/yyyy' })
     //Money rupiah
     // $('[data-mask]').inputmask()
-    $( '[uang]' ).inputmask('000.000.000', {reverse: true});
+    $( '#input_mask_currency' ).inputmask('000.000.000', {reverse: true});
     
 
     //Date picker
@@ -342,7 +386,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   })
 
   // DropzoneJS Demo Code Start
-  Dropzone.autoDiscover = false
+  Dropzone.autoDiscover = true
 
   // Get the template HTML and remove it from the doumenthe template HTML and remove it from the doument
   var previewNode = document.querySelector("#template")
@@ -402,6 +446,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
         tanpa_rupiah.value = formatRupiah(this.value);
     });
 
+    var peran_pengurus = document.getElementById('tanpa-rupiah1');
+    peran_pengurus.addEventListener('keyup', function(e)
+    {
+      peran_pengurus.value = formatRupiah(this.value);
+    });
+
+    var peran_pengurus1 = document.getElementById('tanpa-rupiah2');
+    peran_pengurus1.addEventListener('keyup', function(e)
+    {
+      peran_pengurus1.value = formatRupiah(this.value);
+    });
+
     
     /* Dengan Rupiah */
     var dengan_rupiah = document.getElementById('dengan-rupiah');
@@ -430,8 +486,6 @@ scratch. This page gets rid of all links and provides the needed markup only.
 </script>
 
 <script type="text/javascript">
-  
-
   $(".form-horizontal").keyup(function() {
     // var n = parseInt($("#tanpa-rupiah").val())
     var n = document.getElementById("tanpa-rupiah").value;
@@ -470,6 +524,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
   $('#angsuran').attr('value',a)
   $('#total').attr('value',ttl)
   $('#bunga').attr('value',b)
+  });
+</script>
+<script>
+    $('#form1').keyup(function() {
+    // var n = parseInt($("#tanpa-rupiah").val())
+    var pk = document.getElementById("tanpa-rupiah").value;
+    var pp = document.getElementById("tanpa-rupiah1").value;
+  var pk1 = pk.replace(/[^\w\s]|_/g, "");
+  var pp1 = pp.replace(/[^\w\s]|_/g, "");
+  var pk2 = parseInt(pk1);
+  var pp2 = parseInt(pp1);
+  
+  var jml = pk2+pp2;
+
+  $('#tanpa-rupiah2').attr('value',jml)
   });
 </script>
 <!-- sweatalert -->
@@ -709,6 +778,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
   });
 
 </script>
+<script type="text/javascript">
+function loading() {
+  document.getElementById('load').classList.remove('d-none');
+}
+</script>
 <script>
   $(function () {
     /* jQueryKnob */
@@ -944,6 +1018,101 @@ $(function () {
     }
   })
 })
+</script>
+<script>
+$(function () {
+  // $.validator.setDefaults({
+  //   submitHandler: function () {
+  //     alert( "Form successful submitted!" );
+  //   }
+  // });
+  $('#quickForm').validate({
+    rules: {
+      old_password: {
+        required: true,
+      },
+      new_password: {
+        required: true,
+        minlength: 8
+      },
+      confirm_password: {
+        required: true,
+        minlength: 8
+      },
+      terms: {
+        required: true
+      },
+    },
+    messages: {
+      old_password: {
+        required: "Please enter Old Password ",
+      },
+      new_password: {
+        required: "Please provide a new password",
+        minlength: "Your password must be at least 8 characters long"
+      },
+      confirm_password: {
+        required: "Please provide a confirm password",
+        minlength: "Your password must be at least 8 characters long"
+      },
+      terms: "Please mmark in checkbox"
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
+});
+</script>
+<script>
+  var checkbox = document.getElementById("customSwitch1");
+  var nav = document.getElementById("Mynav");
+  var bd = document.getElementById("Mybody");
+  var side = document.getElementById("MySide");
+  var mdl = document.getElementById("modal-mode");
+  var cncl = document.getElementById("btn-cancel");
+
+checkbox.addEventListener("change", function() {
+  if (checkbox.checked) {
+    bd.classList.add("dark-mode");
+    nav.classList.add("navbar-dark");
+    nav.classList.remove("navbar-light");
+    side.classList.remove("sidebar-light-navy");
+    side.classList.add("sidebar-dark-navy");
+    mdl.style.display = "block";
+  } else {
+    bd.classList.remove("dark-mode");
+    nav.classList.add("navbar-light");
+    nav.classList.remove("navbar-dark");
+    side.classList.add("sidebar-light-navy");
+    side.classList.remove("sidebar-dark-navy");
+    mdl.style.display = "block";
+  }
+});
+
+  cncl.addEventListener("click", function() {
+  if (checkbox.checked) {
+    checkbox.checked = false;
+    mdl.style.display = "none";
+    bd.classList.remove("dark-mode");
+    nav.classList.remove("navbar-dark bg-dark");
+    side.classList.remove("sidebar-dark-navy");
+
+  } else {
+    checkbox.checked = true;
+    mdl.style.display = "none";
+    bd.classList.add("dark-mode");
+    nav.classList.add("navbar-dark bg-dark");
+    side.classList.add("sidebar-dark-navy");
+  }
+});
 </script>
 </body>
 </html>

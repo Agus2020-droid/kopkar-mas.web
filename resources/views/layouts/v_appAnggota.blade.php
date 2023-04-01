@@ -38,17 +38,43 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="{{asset('template/')}}/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
   <!-- Toastr -->
   <link rel="stylesheet" href="{{asset('template/')}}/plugins/toastr/toastr.min.css">
-  
+  <style>
+
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 60px;
+  height: 60px;
+  -webkit-animation: fa-spin 2s linear infinite; /* Safari */
+  animation: fa-spin 2s linear infinite;
+  position: fixed;
+  z-index: 999;
+  text-align: center;
+  /* left: 50%; */
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% { -webkit-transform: rotate(0deg); }
+  100% { -webkit-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
 </head>
-<body class="hold-transition layout-top-nav layout-navbar-fixed">
+<body id="Mybody" <?php if(auth()->user()->mode == 'on') echo 'class="hold-transition layout-top-nav dark-mode layout-navbar-fixed"'; else echo 'class="hold-transition layout-top-nav layout-navbar-fixed"';?> >
 <div class="wrapper">
 
   <!-- Navbar -->
-  <nav class="main-header navbar navbar-expand-md navbar-light navbar-white">
+  <nav id="Mynav"class="main-header navbar navbar-expand-md navbar-light <?php if(auth()->user()->mode == 'on') echo 'navbar-dark'; else echo 'navbar-white';?> elevation-2">
     <div class="container">
     <a href="#" class="navbar-brand">
         <img src="{{asset('logo1.png')}}" alt="AdminLTE Logo" class="brand-image img-circle elevation-0" style="opacity: .8; height: 30px">
-        <span class="brand-text font-weight-light">Kopkar <strong> MAS</strong></span>
+        <span class="brand-text font-weight-light"><strong style="font-family: 'Lucida Handwriting', 'Lucida Handwriting','cursive;">Kopkar</strong> MAS</span>
       </a>
 
       <!-- <button class="navbar-toggler order-1" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -96,7 +122,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
         </ul> -->
 
         <!-- SEARCH FORM -->
-        <form class="form-inline ml-0 ml-md-3">
+        <!-- <form class="form-inline ml-0 ml-md-3">
           <div class="input-group input-group-sm">
             <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
             <div class="input-group-append">
@@ -105,12 +131,21 @@ scratch. This page gets rid of all links and provides the needed markup only.
               </button>
             </div>
           </div>
-        </form>
+        </form> -->
       </div>
 
       <!-- Right navbar links -->
       <ul class="order-1 order-md-3 navbar-nav navbar-no-expand ml-auto">
-      
+        <li class="nav-item">
+        <div class="custom-switch pt-2">
+        <form id="mode-form" action="{{ route('update.mode') }}" method="POST">
+              @csrf
+          
+                  <input name="mode" type="checkbox" class="custom-control-input" id="customSwitch1" <?php if(auth()->user()->mode == 'on') echo 'checked'; else echo '';?>>
+                  <label class="custom-control-label" for="customSwitch1"><i class='fas fa-moon'></i></label>
+                  </form>
+                </div>
+        </li>
         <!-- Notifications Dropdown Menu -->
         <li class="nav-item dropdown">
           <a class="nav-link" data-toggle="dropdown" href="#">
@@ -120,7 +155,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
           @else
             @endif
         </a>
-        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right table-responsive" style="max-height: 500px">
           <span class="dropdown-item dropdown-header">{{count(auth()->user()->unreadNotifications)}} Notifications</span>
           @foreach(auth()->user()->unreadNotifications as $notification)
           <div class="dropdown-divider"></div>
@@ -143,12 +178,35 @@ scratch. This page gets rid of all links and provides the needed markup only.
     </div>
   </nav>
   <!-- /.navbar -->
+  <div class="modal fade show" id="modal-mode" style="display: none; padding-right: 17px;" aria-modal="true" role="dialog">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content bg-default">
+        <div class="modal-header bg-navy">
+          <label class="modal-title">Mode Tampilan</label>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>Ganti mode {{auth()->user()->mode == 'on'? 'terang':'gelap'}} ? </p>
+        </div>
+        <div class="modal-footer justify-content-between">
+          <button id="btn-cancel" type="button" class="btn btn-outline-light" data-dismiss="modal">Cancel</button>
+          <a class="btn btn-primary" href="{{ route('update.mode') }}"
+              onclick="event.preventDefault();document.getElementById('mode-form').submit();">OK</a>
+        
+        </div>
+      </div>
+      <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+  </div> 
   <div class="modal fade show" id="modal-logout" style="display: none; padding-right: 17px;" aria-modal="true" role="dialog">
     <div class="modal-dialog modal-sm">
       <div class="modal-content bg-default">
         <div class="modal-header bg-navy">
           <!-- <h4 class="modal-title"></h4> -->
-          <img src="{{asset('logo1.png')}}" alt="AdminLTE Logo" class="brand-image img-circle elevation-0" style="opacity: .8; height: 50px">
+          <img src="{{url('storage/foto_user/'.auth()->user()->foto)}}" alt="AdminLTE Logo" class="brand-image img-circle elevation-0" style="width: 50px;height: 50px;object-fit: cover;object-position: 100% 0;">
           <span class="brand-text font-weight-light pl-2"><strong>{{auth()->user()->name}}</strong><br><small class="text-mute">{{auth()->user()->email}}</small></span>
           
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -230,6 +288,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <script src="{{asset('template/')}}/plugins/sweetalert2/sweetalert2.min.js"></script>
 <!-- Toastr -->
 <script src="{{asset('template/')}}/plugins/toastr/toastr.min.js"></script>
+<!-- jquery-validation -->
+<script src="{{asset('template/')}}/plugins/jquery-validation/jquery.validate.min.js"></script>
+<script src="{{asset('template/')}}/plugins/jquery-validation/additional-methods.min.js"></script>
 <script>
   $(function () {
     //Initialize Select2 Elements
@@ -419,8 +480,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
   const knds1 = document.getElementById('radioPrimary1')
   const knds2 = document.getElementById('radioPrimary2')
-  const beli1 = document.getElementById('radioDanger1')
-  const beli2 = document.getElementById('radioDanger2')
+  // const beli1 = document.getElementById('radioDanger1')
+  // const beli2 = document.getElementById('radioDanger2')
   var x = document.getElementById('tenor');
 
 
@@ -506,8 +567,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
       knds2.checked = false;
       nb.value = '';
       jb.value = '';
-      beli1.checked = false;
-      beli2.checked = false;
+      bo.value = '';
+      // beli1.checked = false;
+      // beli2.checked = false;
       sp.value = '';
       x.options[1].classList.remove('d-none');
       x.options[2].classList.remove('d-none');
@@ -566,6 +628,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
     }
   });
 
+</script>
+<script type="text/javascript">
+function loading() {
+  document.getElementById('load').classList.remove('d-none');
+}
 </script>
 <script>
   $(function () {
@@ -729,7 +796,98 @@ $('#cb').click(function(){
     
 
     })
-  </script>
+</script>
 @endif
+<script>
+$(function () {
+  // $.validator.setDefaults({
+  //   submitHandler: function () {
+  //     alert( "Form successful submitted!" );
+  //   }
+  // });
+  $('#quickForm').validate({
+    rules: {
+      old_password: {
+        required: true,
+      },
+      new_password: {
+        required: true,
+        minlength: 8
+      },
+      confirm_password: {
+        required: true,
+        minlength: 8
+      },
+      terms: {
+        required: true
+      },
+    },
+    messages: {
+      old_password: {
+        required: "Masukan password lama ",
+      },
+      new_password: {
+        required: "Masukan password baru",
+        minlength: "Password minimal 8 karakter"
+      },
+      confirm_password: {
+        required: "Masukan password konfirmasi",
+        minlength: "Password minimal 8 karakter"
+      },
+      terms: "Beri tanda centang pada box diatas "
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
+});
+</script>
+<script>
+  var checkbox = document.getElementById("customSwitch1");
+  var nav = document.getElementById("Mynav");
+  var bd = document.getElementById("Mybody");
+  var mdl = document.getElementById("modal-mode");
+  var cncl = document.getElementById("btn-cancel");
+
+checkbox.addEventListener("change", function() {
+  if (checkbox.checked) {
+    bd.classList.add("dark-mode");
+    nav.classList.add("navbar-dark");
+    nav.classList.remove("navbar-white");
+    mdl.style.display = "block";
+  } else {
+    bd.classList.remove("dark-mode");
+    nav.classList.add("navbar-white");
+    nav.classList.remove("navbar-dark");
+    mdl.style.display = "block";
+  }
+});
+
+cncl.addEventListener("click", function() {
+  if (checkbox.checked) {
+    checkbox.checked = false;
+    mdl.style.display = "none";
+    bd.classList.remove("dark-mode");
+    nav.classList.remove("navbar-dark");
+
+  } else {
+    checkbox.checked = true;
+    mdl.style.display = "none";
+    bd.classList.add("dark-mode");
+    nav.classList.add("navbar-dark");
+  }
+  
+});
+
+
+</script>
 </body>
 </html>

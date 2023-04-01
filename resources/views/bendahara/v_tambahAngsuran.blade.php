@@ -54,6 +54,7 @@
                     <input name="kredit_kd" type="hidden" value="{{$data->kd_kredit}}">
                     <input name="user_id" type="hidden" value="{{$data->user_id}}">
                     <input name="nama" type="hidden" value="{{$data->nama}}">
+                    <input name="nik_ktp" type="hidden" value="{{$data->nik_ktp}}">
                     <input name="ttl_kredit" type="hidden" value="{{$ttlKredit}}">
                     <input name="ttl_angsuran" type="hidden" value="{{$ttlAngsuran}}">
                       <div class="card collapsed-card" style="border: 0px">
@@ -163,7 +164,7 @@
                         </div>
                       </div>
                       </div>
-                      <div class="card-footer">
+                      <div class="card-footer bg-olive">
                       <div class="form-group row">
                           <label class="col-sm-3 col-form-label">TANGGAL</label>
                           <div class="col-sm-2">

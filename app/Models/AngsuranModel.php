@@ -13,6 +13,7 @@ class AngsuranModel extends Model
     protected $primaryKey = "id_angsuran";
     protected $fillable = [
         'kredit_kd',
+        'nik_ktp',
         'user_id',
         'nama',
         'tgl_angsuran',
